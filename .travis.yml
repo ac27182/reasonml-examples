@@ -1,0 +1,11 @@
+language: node_js
+stages: deploy
+node_js:
+  - "13"
+jobs:
+  include:
+    - stage: deploy
+      script: echo "hello world"
+branches:
+  only:
+    - master
