@@ -12,4 +12,5 @@ type state = {
 type action =
   | EditNewItem(string)
   | SaveNewItem
-  | DeleteItem(string);
+  | DeleteItem(item)
+  | ToggleComplete(item);

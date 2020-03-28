@@ -1,9 +1,13 @@
 open ReactEvent;
 
-Random.init;
 // open Belt;
 
 let items0: list(string) = ["do washing", "clean room", "work on project"];
+
+let idGen = (): string => {
+  Random.self_init();
+  max_int / 2 |> Random.int |> string_of_int;
+};
 
 [@react.component]
 let make = () => {
@@ -15,15 +19,6 @@ let make = () => {
 
   let initialState: TodoTypes.state = {items: [], newItem: initialItem};
 
-  let initialState0: TodoTypes.state = {
-    items: [
-      {description: "do laundry", complete: false, id: "item-0"},
-      {description: "do work", complete: false, id: "item-1"},
-      {description: "make dinner", complete: false, id: "item-2"},
-    ],
-    newItem: initialItem,
-  };
-
   let reducer =
       (state: TodoTypes.state, action: TodoTypes.action): TodoTypes.state =>
     TodoTypes.(
@@ -33,41 +28,51 @@ let make = () => {
           newItem: {
             description,
             complete: false,
-            id: "item-" ++ (state.items |> List.length |> string_of_int),
+            id: idGen(),
           },
         }
       | SaveNewItem => {
           newItem: initialItem,
           items: List.cons(state.newItem, state.items),
         }
-      | DeleteItem(id) => {
-          ...state,
-          items: state.items |> List.filter(item => item.id != id),
-        }
+      | DeleteItem(item) =>
+        let xs = Belt_List.keep(state.items, i => i !== item);
+        {...state, items: xs};
+      | ToggleComplete(item) =>
+        let xs =
+          state.items
+          |> List.map(i =>
+               i.id == item.id ? {...i, complete: !i.complete} : i
+             );
+        {...state, items: xs};
       }
     );
 
   let (state: TodoTypes.state, dispatch) =
-    React.useReducer(reducer, initialState0);
+    React.useReducer(reducer, initialState);
 
-  state |> Js.log;
+  let toggleDelete = (item: TodoTypes.item) => dispatch(DeleteItem(item));
 
-  let toggleDelete = (id: string) => dispatch(DeleteItem(id));
+  let toggleComplete = (item: TodoTypes.item) =>
+    dispatch(ToggleComplete(item));
+
+  let onEdit = event => {
+    let s: string = event->Form.target##value;
+    dispatch(TodoTypes.EditNewItem(s));
+  };
+
+  let onSave = _ => dispatch(SaveNewItem);
 
   <div>
+    <AddItem description={state.newItem.description} onEdit onSave />
+    <Items items={state.items} toggleDelete toggleComplete />
     <div>
-      <input
-        value={state.newItem.description}
-        onChange={event => {
-          let s: string = event->Form.target##value;
-          dispatch(TodoTypes.EditNewItem(s));
-        }}
-        placeholder="item description"
-      />
-      <button onClick={_ => dispatch(SaveNewItem)}>
-        {"add item" |> React.string}
-      </button>
+      <button> {"all" |> React.string} </button>
+      <button> {"complete" |> React.string} </button>
+      <button> {"incomplete" |> React.string} </button>
+      <input placeholder="fuzzy search" />
+      <button> {"clear" |> React.string} </button>
+      <button> {"clear all" |> React.string} </button>
     </div>
-    <Items items={state.items} toggleDelete />
   </div>;
 };
