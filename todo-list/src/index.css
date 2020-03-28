@@ -1,0 +1,30 @@
+body {
+  margin: 0;
+}
+
+.header {
+  overflow: hidden;
+  padding: 20px 10px;
+  background-color: #f4eeff;
+}
+
+.header a {
+  float: left;
+  color: black;
+  text-align: center;
+  padding: 10px;
+  font-size: 20px;
+  border-radius: 5px;
+}
+
+.header a.logo {
+  font-size: 30px;
+}
+
+@media (max-width: 500px) {
+  .header a {
+    float: none;
+    display: block;
+    text-align: center;
+  }
+}

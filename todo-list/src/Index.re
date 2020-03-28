@@ -1,5 +1,3 @@
-// [%bs.raw {|require("./index.css")|}];
-open Components;
+[%bs.raw {|require("./index.css")|}];
 
-ReactDOMRe.renderToElementWithId(<Box />, "root");
-ReactDOMRe.renderToElementWithId(<Box2 />, "root0");
+ReactDOMRe.renderToElementWithId(<App />, "root") /* ReactDOMRe.renderToElementWithId(<div />, "root")*/;

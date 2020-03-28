@@ -1,33 +1,32 @@
-type state = {count: int};
+open TodoTypes;
+type state = {
+  items: list(string),
+  currentInput: string,
+};
 
-type action =
-  | Increment
-  | Decrement;
-
-let initialState = {count: 0};
+let initialState = {items: [], currentInput: ""};
 
 let reducer = (state, action) =>
   switch (action) {
-  | Increment => {count: state.count + 1}
-  | Decrement => {count: state.count - 1}
+  | Save(description) => {
+      ...initialState,
+      items: state.items |> List.append([description]),
+    }
+  | Edit(input) => {...state, currentInput: input}
   };
+
+let l = ["x", "y", "z"];
 
 [@react.component]
 let make = () => {
   let (state, dispatch) = React.useReducer(reducer, initialState);
 
-  <main>
-    {React.string("Simple counter with reducer")}
-    <div>
-      <button onClick={_ => dispatch(Decrement)}>
-        {React.string("Decrement")}
-      </button>
-      <span className="counter">
-        {state.count |> string_of_int |> React.string}
-      </span>
-      <button onClick={_ => dispatch(Increment)}>
-        {React.string("Increment")}
-      </button>
-    </div>
-  </main>;
+  <div>
+    <Header />
+    <AddItem currentInput={state.currentInput} d=dispatch />
+    {state.items
+     |> List.map(i => <div> {ReasonReact.string(i)} </div>)
+     |> Array.of_list
+     |> ReasonReact.array}
+  </div>;
 };
