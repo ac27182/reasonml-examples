@@ -1,3 +1,15 @@
+type item = {
+  description: string,
+  complete: bool,
+  id: string,
+};
+
+type state = {
+  items: list(item),
+  newItem: item,
+};
+
 type action =
-  | Save(string)
-  | Edit(string);
+  | EditNewItem(string)
+  | SaveNewItem
+  | DeleteItem(string);
