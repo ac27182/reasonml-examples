@@ -18,13 +18,14 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "bs-uuid": "^0.3.1",
     "bs-webapi": "^0.15.9",
     "react": "^16.8.1",
     "react-dom": "^16.8.1",
     "reason-react": ">=0.7.0"
   },
   "devDependencies": {
-    "bs-platform": "^7.1.1",
+    "bs-platform": "^7.2.2",
     "webpack": "^4.0.1",
     "webpack-cli": "^3.1.1",
     "webpack-dev-server": "^3.1.8",

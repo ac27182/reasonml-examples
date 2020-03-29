@@ -1,78 +1,110 @@
 open ReactEvent;
 
-// open Belt;
-
-let items0: list(string) = ["do washing", "clean room", "work on project"];
-
 let idGen = (): string => {
   Random.self_init();
   max_int / 2 |> Random.int |> string_of_int;
 };
 
+let initialItem: TodoTypes.item = {description: "", complete: false, id: ""};
+
+let initialState: TodoTypes.state = {
+  items: [],
+  newItem: initialItem,
+  filter: TodoTypes.All,
+  filterQuery: "",
+};
+
 [@react.component]
 let make = () => {
-  let initialItem: TodoTypes.item = {
-    description: "",
-    complete: false,
-    id: "",
-  };
-
-  let initialState: TodoTypes.state = {items: [], newItem: initialItem};
-
   let reducer =
       (state: TodoTypes.state, action: TodoTypes.action): TodoTypes.state =>
     TodoTypes.(
       switch (action) {
-      | EditNewItem(description) => {
-          ...state,
-          newItem: {
-            description,
-            complete: false,
-            id: idGen(),
-          },
-        }
-      | SaveNewItem => {
-          newItem: initialItem,
-          items: List.cons(state.newItem, state.items),
-        }
+      | EditNewItem(description) =>
+        let newItem = {description, complete: false, id: idGen()};
+        {...state, newItem};
+
+      | SaveNewItem =>
+        let items = List.cons(state.newItem, state.items);
+        {...state, newItem: initialItem, items};
+
       | DeleteItem(item) =>
-        let xs = Belt_List.keep(state.items, i => i !== item);
-        {...state, items: xs};
+        let items = Belt_List.keep(state.items, i => i !== item);
+        {...state, items};
+
       | ToggleComplete(item) =>
-        let xs =
+        let items =
           state.items
           |> List.map(i =>
                i.id == item.id ? {...i, complete: !i.complete} : i
              );
-        {...state, items: xs};
+        {...state, items};
+
+      | Filter(f) => {...state, filter: f}
+
+      | Clear => {...state, items: []}
+
+      | EditFilterQuery(q) => {...state, filterQuery: q}
       }
     );
 
   let (state: TodoTypes.state, dispatch) =
     React.useReducer(reducer, initialState);
 
-  let toggleDelete = (item: TodoTypes.item) => dispatch(DeleteItem(item));
+  // we could perhaps partially apply these functions to make them referentially transparent?
+  // indeed a lot of these functions do the same shit
+  // we could make this more readable ang generic
+  let toggleDelete = (item: TodoTypes.item): unit =>
+    dispatch(DeleteItem(item));
 
-  let toggleComplete = (item: TodoTypes.item) =>
+  let toggleComplete = (item: TodoTypes.item): unit =>
     dispatch(ToggleComplete(item));
 
-  let onEdit = event => {
+  let toggleFilter = (filter: TodoTypes.filter): unit =>
+    dispatch(Filter(filter));
+
+  let onEdit = (event: ReactEvent.Form.t): unit => {
     let s: string = event->Form.target##value;
     dispatch(TodoTypes.EditNewItem(s));
   };
 
-  let onSave = _ => dispatch(SaveNewItem);
+  let editFilterQuery = (event: ReactEvent.Form.t): unit => {
+    let s: string = event->Form.target##value;
+    dispatch(TodoTypes.EditFilterQuery(s));
+  };
+  let clearFilterQuery = _: unit => dispatch(TodoTypes.EditFilterQuery(""));
+
+  let toggleClear = _: unit => dispatch(Clear);
+
+  let onSave = _: unit => dispatch(SaveNewItem);
+
+  let customFilter = (items: list(TodoTypes.item)): list(TodoTypes.item) =>
+    items
+    |> List.filter(item =>
+         TodoTypes.(
+           switch (state.filter) {
+           | Complete => item.complete
+           | Incomplete => !item.complete
+           | All => true
+           }
+         )
+         && item.description
+         |> Js.String.includes(state.filterQuery)
+       );
 
   <div>
     <AddItem description={state.newItem.description} onEdit onSave />
-    <Items items={state.items} toggleDelete toggleComplete />
-    <div>
-      <button> {"all" |> React.string} </button>
-      <button> {"complete" |> React.string} </button>
-      <button> {"incomplete" |> React.string} </button>
-      <input placeholder="fuzzy search" />
-      <button> {"clear" |> React.string} </button>
-      <button> {"clear all" |> React.string} </button>
-    </div>
+    {state.items
+     |> customFilter
+     |> List.map(item => <Item item toggleDelete toggleComplete />)
+     |> Array.of_list
+     |> React.array}
+    <Filters
+      toggleFilter
+      toggleClear
+      editFilterQuery
+      clearFilterQuery
+      filterQuery={state.filterQuery}
+    />
   </div>;
 };
