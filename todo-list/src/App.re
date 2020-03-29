@@ -8,7 +8,11 @@ let idGen = (): string => {
 let initialItem: TodoTypes.item = {description: "", complete: false, id: ""};
 
 let initialState: TodoTypes.state = {
-  items: [],
+  items:
+    Belt_List.make(
+      100,
+      {description: "do this", complete: false, id: idGen()}: TodoTypes.item,
+    ),
   newItem: initialItem,
   filter: TodoTypes.All,
   filterQuery: "",
@@ -92,13 +96,9 @@ let make = () => {
          |> Js.String.includes(state.filterQuery)
        );
 
-  <div>
+  <div className="master-container">
+    <Header />
     <AddItem description={state.newItem.description} onEdit onSave />
-    {state.items
-     |> customFilter
-     |> List.map(item => <Item item toggleDelete toggleComplete />)
-     |> Array.of_list
-     |> React.array}
     <Filters
       toggleFilter
       toggleClear
@@ -106,5 +106,12 @@ let make = () => {
       clearFilterQuery
       filterQuery={state.filterQuery}
     />
+    <div className="items-container">
+      {state.items
+       |> customFilter
+       |> List.map(item => <Item item toggleDelete toggleComplete />)
+       |> Array.of_list
+       |> React.array}
+    </div>
   </div>;
 };
