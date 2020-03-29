@@ -1,21 +1,10 @@
 open ReactEvent;
-open TodoTypes;
 
 [@react.component]
-let make = (~d, ~currentInput) => {
+let make = (~description: string, ~onEdit: Form.t => unit, ~onSave) =>
   <div>
-    <input
-      value=currentInput
-      type_="text"
-      maxLength=100
-      placeholder="item goes here"
-      onChange={event => {
-        let v = event->Form.target##value;
-        d(Edit(v));
-      }}
-    />
-    <button onClick={_ => d(Save(currentInput))}>
+    <input value=description onChange=onEdit />
+    <button onClick=onSave disabled={description == ""}>
       {"add item" |> React.string}
     </button>
   </div>;
-};
