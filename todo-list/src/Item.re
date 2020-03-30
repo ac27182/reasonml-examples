@@ -12,7 +12,7 @@ let make =
     <button onClick={_ => item |> toggleDelete}>
       {"delete" |> React.string}
     </button>
-    <button className="custom-button" onClick={_ => item |> toggleComplete}>
+    <button onClick={_ => item |> toggleComplete}>
       {(item.complete ? "un-check" : "check") |> React.string}
     </button>
   </div>;

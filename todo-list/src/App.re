@@ -10,8 +10,25 @@ let initialItem: TodoTypes.item = {description: "", complete: false, id: ""};
 let initialState: TodoTypes.state = {
   items:
     Belt_List.make(
-      100,
-      {description: "do this", complete: false, id: idGen()}: TodoTypes.item,
+      1,
+      {
+        description: "Let me not to the marriage of true minds
+Admit impediments. Love is not love
+Which alters when it alteration finds,
+Or bends with the remover to remove.
+O no! it is an ever-fixed mark
+That looks on tempests and is never shaken;
+It is the star to every wand'ring bark,
+Whose worth's unknown, although his height be taken.
+Love's not Time's fool, though rosy lips and cheeks
+Within his bending sickle's compass come;
+Love alters not with his brief hours and weeks,
+But bears it out even to the edge of doom.
+If this be error and upon me prov'd,
+I never writ, nor no man ever lov'd.",
+        complete: false,
+        id: idGen(),
+      }: TodoTypes.item,
     ),
   newItem: initialItem,
   filter: TodoTypes.All,
@@ -55,9 +72,6 @@ let make = () => {
   let (state: TodoTypes.state, dispatch) =
     React.useReducer(reducer, initialState);
 
-  // we could perhaps partially apply these functions to make them referentially transparent?
-  // indeed a lot of these functions do the same shit
-  // we could make this more readable ang generic
   let toggleDelete = (item: TodoTypes.item): unit =>
     dispatch(DeleteItem(item));
 
@@ -88,7 +102,9 @@ let make = () => {
          TodoTypes.(
            switch (state.filter) {
            | Complete => item.complete
+
            | Incomplete => !item.complete
+
            | All => true
            }
          )

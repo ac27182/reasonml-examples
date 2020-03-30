@@ -44,11 +44,14 @@ body {
 
 .items-container {
   height: 100%;
-  overflow: scroll;
 }
 
 .filter-query-bar {
   display: grid;
+  border-radius: 5px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+
   grid-template-columns: auto 50%;
 }
 
@@ -63,5 +66,6 @@ body {
   border-radius: 50%;
 }
 
+/* play around with responsive design */
 @media (max-width: 500px) {
 }
