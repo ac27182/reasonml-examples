@@ -27,6 +27,8 @@
 
 - making components more loosely coupled...
 
+- actually write some unit tests
+
 ## misc
 
 - https://www.npmjs.com/package/relude
