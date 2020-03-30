@@ -1,1 +1,1 @@
-/* Js.log("hello world")*/
+Js.log("hello world");
