@@ -1,1 +1,3 @@
 # faceless server
+
+## notes

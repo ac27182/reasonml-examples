@@ -1,4 +1,4 @@
-import redis from "redis";
+import redis, { RedisClient } from "redis";
 
 // const subscriber0 = redis.createClient();
 // const subscriber1 = redis.createClient();
@@ -72,5 +72,43 @@ client.lpush("list0", genMessage());
 client.lrange("list0", 0, -1, (e, d) => console.log(d));
 client.del("list0");
 
-// client.hscan("channel0", (x, m) => (x ? console.log(x) : console.log(m)));
-// client.hgetall("channel0", (e, d) => (e ? console.log(e) : console.log(d)));
+// client.multi().rpush;
+
+// blindings to make
+
+// RedisClient
+// lpush
+// lrange
+// del
+// publish
+// subscribe
+// quit
+
+// Multi
+// rpush
+
+interface State {
+  channels: Array<Channel>;
+}
+
+interface User {
+  userId: string;
+  client: RedisClient;
+  creationTime: number;
+}
+
+interface Channel {
+  name: string;
+  password: string;
+  protected: boolean;
+  hidden: boolean;
+  users: Array<User>;
+  creationTime: number;
+}
+
+interface Message {
+  messageId: string;
+  userId: String;
+  references: Array<string>;
+  creationTime: string;
+}
