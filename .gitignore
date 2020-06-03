@@ -1,0 +1,9 @@
+# directories
+node_modules/
+.vscode/
+
+# files
+*.bs.js
+
+# user generated
+themes.txt
