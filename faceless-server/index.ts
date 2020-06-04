@@ -1,4 +1,5 @@
-import redis, { RedisClient } from "redis";
+import redis, { RedisClient } from 'redis'
+import { uuid } from 'uuidv4'
 
 // const subscriber0 = redis.createClient();
 // const subscriber1 = redis.createClient();
@@ -37,7 +38,7 @@ import redis, { RedisClient } from "redis";
 
 // shutdown();
 
-const client = redis.createClient();
+// const client = redis.createClient()
 
 // client.set("channel/0", "message0");
 // client.set("channel/1", "message1");
@@ -45,32 +46,19 @@ const client = redis.createClient();
 
 // client.scan("channel", (e, d) => (e ? console.log(e) : console.log(d)));
 
-interface message {
-  id: String;
-  payload: String;
-  timestamp: number;
-}
-
-const genMessage = (): string =>
-  JSON.stringify({
-    id: "xxx",
-    payload: "hello",
-    timestamp: Date.now()
-  });
-
 // const m: message = { id: "x", payload: "hello" };
 // const s: string = JSON.stringify(m);
 
-client.hset("channel0", "0", "message0");
-client.hset("channel0", "1", "message1");
-client.hset("channel0", "2", "message2");
+// client.hset('channel0', '0', 'message0')
+// client.hset('channel0', '1', 'message1')
+// client.hset('channel0', '2', 'message2')
 
-client.lpush("list0", genMessage());
-client.lpush("list0", genMessage());
-client.lpush("list0", genMessage());
+// client.lpush('list0', genMessage())
+// client.lpush('list0', genMessage())
+// client.lpush('list0', genMessage())
 
-client.lrange("list0", 0, -1, (e, d) => console.log(d));
-client.del("list0");
+// client.lrange('list0', 0, -1, (e, d) => console.log(d))
+// client.del('list0')
 
 // client.multi().rpush;
 
@@ -88,27 +76,106 @@ client.del("list0");
 // rpush
 
 interface State {
-  channels: Array<Channel>;
+	channels: Array<Channel>
 }
 
 interface User {
-  userId: string;
-  client: RedisClient;
-  creationTime: number;
+	userId: string
+	client: RedisClient
+	creationTime: number
 }
 
 interface Channel {
-  name: string;
-  password: string;
-  protected: boolean;
-  hidden: boolean;
-  users: Array<User>;
-  creationTime: number;
+	name: string
+	password: string
+	protected: boolean
+	hidden: boolean
+	users: Array<User>
+	creationTime: number
 }
 
 interface Message {
-  messageId: string;
-  userId: String;
-  references: Array<string>;
-  creationTime: string;
+	messageId: string
+	userId: String
+	references: Array<string>
+	creationTime: number
 }
+
+const createNewChannel = (): Channel => ({
+	name: uuid(),
+	password: '',
+	protected: false,
+	hidden: false,
+	users: [],
+	creationTime: Date.now(),
+})
+
+const createMessage = (): Message => ({
+	messageId: uuid(),
+	userId: uuid(),
+	references: [],
+	creationTime: Date.now(),
+})
+
+const createUser = (): User => ({
+	userId: uuid(),
+	client: redis.createClient(),
+	creationTime: Date.now(),
+})
+
+const initialState = (): State => ({
+	channels: [],
+})
+
+const addNewChannel = (
+	currentState: State,
+	channel: Channel,
+): [State, State] => [
+	currentState,
+	{
+		channels: currentState.channels.concat([channel]),
+	},
+]
+
+const subscribeUser = (channel: Channel, user: User): Channel => {
+	return {
+		...channel,
+		users: channel.users.concat([user]),
+	}
+}
+
+const channel = createNewChannel()
+console.log(channel)
+const user = createUser()
+const channel0 = subscribeUser(channel, user)
+console.log(channel0)
+
+import express from 'express'
+import http from 'http'
+import socket from 'socket.io'
+// import WebSocket from 'ws'
+import websocket from 'websocket'
+
+const server = http.createServer()
+const wss = new websocket.server({ httpServer: server })
+
+wss.on('connect', () => console.log('connected'))
+
+server.listen('3000')
+// const app = express()
+// const server = http.createServer(app)
+// const io = socket(server)
+
+// io.on('connection', () => console.log('connected'))
+
+// server.listen(3000)
+
+// const websocket = new WebSocket.Server({
+// 	port: 3000,
+// })
+
+// const server = http.createServer()
+
+// websocket.on('connection', () => console.log('connected'))
+
+// websocket.onopen = (e: Event) => console.log('open')
