@@ -1,5 +1,6 @@
 import { uuid } from "uuidv4";
 import WebSocket from "ws";
+// const ws = require("ws");
 
 export const genConnection = () => {
   const sessionid = uuid();

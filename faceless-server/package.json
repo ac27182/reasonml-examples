@@ -4,12 +4,16 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "tsc && node dist/app.js"
+    "start-ts": "tsc && node dist/app.js",
+    "build": "bsb -make-world",
+    "start": "bsb -make-world -w",
+    "clean": "bsb -clean-world",
+    "test": "jest --watchAll"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "bs-platform": "^7.3.2",
     "tslint": "^6.1.2",
     "typescript": "^3.9.3"
   },
@@ -19,8 +23,13 @@
     "@types/socket.io": "^2.1.8",
     "@types/websocket": "^1.0.0",
     "@types/ws": "^7.2.5",
+    "bs-bastet": "^1.2.5",
+    "bs-express": "^1.0.1",
+    "bs-socket": "^1.2.2",
+    "bs-ws": "^1.1.4",
     "express": "^4.17.1",
     "redis": "^3.0.2",
+    "relude": "^0.63.1",
     "socket.io": "^2.3.0",
     "uuidv4": "^6.1.0",
     "websocket": "^1.0.31",

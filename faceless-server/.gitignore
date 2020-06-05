@@ -1,1 +1,6 @@
 dist/
+node_modules
+.bsb.lock
+.bs.js
+.merlin
+lib
