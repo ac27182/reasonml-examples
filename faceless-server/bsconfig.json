@@ -10,7 +10,13 @@
     "in-source": true
   },
   "suffix": ".bs.js",
-  "bs-dependencies": ["bs-bastet", "relude", "bs-express", "bs-socket"],
+  "bs-dependencies": [
+    "bs-bastet",
+    "relude",
+    "bs-express",
+    "bs-socket",
+    "bs-fetch"
+  ],
   "warnings": {
     "error": "+101"
   },

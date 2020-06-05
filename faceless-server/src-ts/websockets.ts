@@ -11,16 +11,23 @@ export const genConnection = () => {
 
   connection.on("open", connectionf);
 
-  connection;
+  connection.send;
 };
+const connection = new WebSocket("ws://localhost:3001");
 
 export const genWss = (port: number) => {
   const wss = new WebSocket.Server({ port });
+  // wss.on("connection",)
 
-  const connectionf = (wss: WebSocket): void =>
-    console.log("connection to wss");
+  // const connectionf = (ws: WebSocket): void => {
+  //   console.log("connection to wss");
+  // };
 
-  wss.on("connection", connectionf);
-
-  wss;
+  // wss.on("connection", connectionf);
+  wss.on("connection", (ws: WebSocket) => {
+    ws.on("message", x => {
+      // wss.em;
+    });
+  });
+  // wss.on("")
 };
