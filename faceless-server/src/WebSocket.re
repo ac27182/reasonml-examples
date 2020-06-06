@@ -92,7 +92,7 @@ let con =
       // do naive state operations
 
       let pd = request |> Fetch.Request.url |> parser;
-      Js.log2(pd.userId, "has connected");
+      Js.log(pd.userId ++ " has connected to channel " ++ pd.channelName);
 
       let currentState = state^;
 
@@ -194,7 +194,7 @@ let i03 =
 // create 5 copies of a client
 let f = (w: WsClient.t): list(WsClient.t) => [w, w, w, w, w];
 
-let program =
+let testProgram =
   io1
   |> IO.flatMap(_ => io2)
   |> IO.flatMap(_ => io20)
@@ -216,13 +216,20 @@ let program =
           )
      });
 
-// end of the world
-program
+io1
 |> IO.unsafeRunAsync(
      fun
-     | Ok(_) => Js.log("program ran successfully")
+     | Ok(_) => Js.log("websocket operational")
      | Error(_) => Js.log("an error occcurred"),
    );
+
+// end of the world
+// testProgram
+// |> IO.unsafeRunAsync(
+//      fun
+//      | Ok(_) => Js.log("program ran successfully")
+//      | Error(_) => Js.log("an error occcurred"),
+//    );
 
 // 1. organise the clients using id's /
 // 2. organise the clients into channels /
