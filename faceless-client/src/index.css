@@ -1,14 +1,89 @@
 body {
   margin: 0;
-  font-family: -apple-system, system-ui, "Segoe UI", Helvetica, Arial,
-    sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 }
 
-main {
-  padding: 20px;
+.app-grid {
+  height: 100vh;
+  display: grid;
+  grid-template-rows: 1fr;
+  grid-template-columns: minmax(200px, 450px) minmax(450px, 1fr);
 }
 
-.counter {
-  padding: 20px;
-  display: inline-block;
+/* left hand pannel */
+.pannel {
+  display: grid;
+  grid-template-rows: 50px 25px 1fr;
+  grid-template-columns: 1fr;
+  overflow-y: hidden;
+}
+
+.pannel-item-wrapper {
+  overflow-x: hidden;
+  overflow-y: scroll;
+}
+
+.pannel-item {
+  padding: 10px;
+  border: 0.25px black solid;
+  margin: 1px;
+}
+
+/* channels */
+.spinner-container {
+  overflow-x: hidden;
+  overflow-y: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.channel-container {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 50px 1fr 50px;
+}
+
+.centered-item {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* animation */
+.elipse {
+  width: 100px;
+  height: 200px;
+  border: 0.5px black solid;
+  border-radius: 50%;
+  position: absolute;
+}
+.rotation0 {
+  animation: rotation 20s infinite linear;
+}
+.rotation1 {
+  animation: rotation 19.5s infinite linear;
+}
+.rotation2 {
+  animation: rotation 19s infinite linear;
+}
+.rotation3 {
+  animation: rotation 18.5s infinite linear;
+}
+.rotation4 {
+  animation: rotation 18s infinite linear;
+}
+.rotation5 {
+  animation: rotation 17.5s infinite linear;
+}
+.rotation6 {
+  animation: rotation 17s infinite linear;
+}
+
+@keyframes rotation {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(359deg);
+  }
 }
