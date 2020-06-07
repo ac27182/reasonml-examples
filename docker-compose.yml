@@ -1,0 +1,22 @@
+# version: "3.8"
+# services:
+
+#   client:
+#     image: faceless-client
+#     ports:
+#       - "7000:7000"
+#       depends_on:
+#         - redis
+#         - server
+
+#   server:
+#     image: faceless-server
+#     ports:
+#       - "7001:7001"
+#       depends_on:
+#         - redis
+
+#   redis:
+#     image: redis:latest
+#     ports:
+#       - "7002:6379"

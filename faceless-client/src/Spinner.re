@@ -9,6 +9,7 @@ let make = () => {
       <div className="elipse rotation4" />
       <div className="elipse rotation5" />
       <div className="elipse rotation6" />
+      <div className="elipse rotation7" />
     </div>
   </div>;
 };

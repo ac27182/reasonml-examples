@@ -1,2 +1,0 @@
-- think about the shape of the rest api
-- how is the data going to be encoded and decoded.

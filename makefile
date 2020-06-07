@@ -9,3 +9,16 @@ redis:
 theme-list:
 	@bsb -themes > themes.txt
 
+# commands to add
+
+# brings up faceless
+# faceless-up:
+# 	@docker-compose up
+
+# builds docker images for the client and server
+# build-all:
+	# ???
+
+# removes built images
+# clean:
+# 	???
