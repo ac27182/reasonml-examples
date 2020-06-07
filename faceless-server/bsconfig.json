@@ -15,7 +15,10 @@
     "relude",
     "bs-express",
     "bs-socket",
-    "bs-fetch"
+    "bs-fetch",
+    "reductive",
+    "reason-react",
+    "@glennsl/bs-json"
   ],
   "warnings": {
     "error": "+101"

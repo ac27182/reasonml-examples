@@ -59,43 +59,27 @@ body {
 }
 .rotation0 {
   animation: rotation 8s infinite linear;
-  width: 20px;
-  height: 40px;
 }
 .rotation1 {
   animation: rotation 16s infinite linear;
-  width: 40px;
-  height: 80px;
 }
 .rotation2 {
   animation: rotation 24s infinite linear;
-  width: 60px;
-  height: 120px;
 }
 .rotation3 {
   animation: rotation 32s infinite linear;
-  width: 80px;
-  height: 160px;
 }
 .rotation4 {
   animation: rotation 40s infinite linear;
-  width: 100px;
-  height: 200px;
 }
 .rotation5 {
   animation: rotation 48s infinite linear;
-  width: 120px;
-  height: 240px;
 }
 .rotation6 {
   animation: rotation 56s infinite linear;
-  width: 140px;
-  height: 280px;
 }
 .rotation7 {
   animation: rotation 64s infinite linear;
-  width: 160px;
-  height: 320px;
 }
 
 @keyframes rotation {
