@@ -2,7 +2,7 @@ open Relude_Globals;
 open Redis;
 open Utils;
 
-// hashmaps
+// hashmap ops
 let hset =
     (client: Client.t, ~key: string, ~field: string, ~value: string)
     : IO.t(string, Redis.error) =>
@@ -16,7 +16,7 @@ let hget =
 let hgetall = (client: Client.t, ~key: string): IO.t('a, 'e) =>
   client |> Redis.hgetall(~key) |> toAsync;
 
-// pubsub
+// pubsub ops
 let subscribe = (client: Client.t, ~channel: string): IO.t('a, 'e) =>
   client |> Redis.subscribe(~channel) |> toAsync;
 

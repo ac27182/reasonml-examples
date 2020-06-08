@@ -20,7 +20,7 @@ module Client = {
     t =
     "on";
 
-  [@bs.send] external send: (t, string) => unit = "send";
+  [@bs.send] external send: (t, ~data: string) => unit = "send";
 };
 
 module Server = {

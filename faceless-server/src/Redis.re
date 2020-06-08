@@ -56,7 +56,8 @@ external hget:
   "hget";
 
 [@bs.send]
-external hgetall: (Client.t, ~key: string, callback(string)) => unit =
+external hgetall:
+  (Client.t, ~key: string, callback(Js.Dict.t(string))) => unit =
   "hgetall";
 
 // open Relude_Globals;
