@@ -1,9 +1,16 @@
 # directories
-node_modules/
-.vscode/
+**node_modules/
+**.vscode/
+**lib/
 
 # files
 *.bs.js
+*.bsb.lock
+**.cmj
+**.cmt
+**DS_Store
+**npm-debug.log
+.merlin
 
 # user generated
 themes.txt
