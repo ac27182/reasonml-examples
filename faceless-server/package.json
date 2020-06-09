@@ -4,7 +4,6 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start-ts": "tsc && node dist/test.js",
     "build": "bsb -make-world",
     "watch": "bsb -make-world -w",
     "clean": "bsb -clean-world",
@@ -13,32 +12,15 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "bs-platform": "^7.3.2",
-    "tslint": "^6.1.2",
-    "typescript": "^3.9.3"
+    "bs-platform": "^7.3.2"
   },
   "dependencies": {
     "@glennsl/bs-json": "^5.0.2",
-    "@types/express": "^4.17.6",
-    "@types/redis": "^2.8.22",
-    "@types/socket.io": "^2.1.8",
-    "@types/websocket": "^1.0.0",
-    "@types/ws": "^7.2.5",
     "bs-bastet": "^1.2.5",
     "bs-express": "^1.0.1",
     "bs-fetch": "^0.5.2",
-    "bs-json": "^1.0.1",
-    "bs-socket": "^1.2.2",
-    "bs-ws": "^1.1.4",
-    "express": "^4.17.1",
-    "react": "^16.13.1",
-    "reason-react": "^0.8.0",
-    "redis": "^3.0.2",
-    "reductive": "^2.0.1",
+    "faceless-core": "file:../faceless-core",
     "relude": "^0.63.1",
-    "socket.io": "^2.3.0",
-    "uuidv4": "^6.1.0",
-    "websocket": "^1.0.31",
-    "ws": "^7.3.0"
+    "uuidv4": "^6.1.0"
   }
 }

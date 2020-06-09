@@ -25,6 +25,7 @@ module Client = {
 
 module Server = {
   type t;
+
   [@bs.new] [@bs.module "ws"]
   external wss: Client.serverOptions => t = "Server";
 
@@ -41,5 +42,3 @@ module Server = {
     t =
     "on";
 };
-
-let x = "";

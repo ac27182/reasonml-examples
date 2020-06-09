@@ -1,5 +1,5 @@
 {
-  "name": "faceless-server",
+  "name": "faceless-core",
   "version": "0.1.0",
   "sources": {
     "dir": "src",
@@ -10,16 +10,10 @@
     "in-source": true
   },
   "suffix": ".bs.js",
-  "bs-dependencies": [
-    "@glennsl/bs-json",
-    "bs-bastet",
-    "relude",
-    "bs-express",
-    "bs-fetch",
-    "faceless-core"
-  ],
+  "bs-dependencies": ["@glennsl/bs-json", "bs-bastet", "bs-fetch", "relude"],
   "warnings": {
     "error": "+101"
   },
+  "namespace": true,
   "refmt": 3
 }
