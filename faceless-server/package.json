@@ -7,20 +7,30 @@
     "build": "bsb -make-world",
     "watch": "bsb -make-world -w",
     "clean": "bsb -clean-world",
-    "test": "jest --watchAll"
+    "test": "jest -w ./__tests__"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@glennsl/bs-jest": "^0.5.1",
+    "@glennsl/bs-json": "^5.0.2",
     "bs-platform": "^7.3.2"
   },
   "dependencies": {
-    "@glennsl/bs-json": "^5.0.2",
     "bs-bastet": "^1.2.5",
     "bs-express": "^1.0.1",
     "bs-fetch": "^0.5.2",
     "faceless-core": "file:../faceless-core",
+    "redis": "^3.0.2",
     "relude": "^0.63.1",
-    "uuidv4": "^6.1.0"
+    "uuidv4": "^6.1.0",
+    "ws": "^7.3.0"
+  },
+  "jest": {
+    "verbose": false,
+    "testURL": "http://localhost/",
+    "testPathIgnorePatterns": [
+      "/node_modules/"
+    ]
   }
 }

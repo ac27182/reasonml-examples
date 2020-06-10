@@ -1,15 +1,20 @@
+open FacelessCore;
+
 let b2s = (b: bool): string => b ? "true" : "false";
 
-let makePannelItem = (c: Client.channel): React.element => {
-  <div className="pannel-item">
-    <div> {c.name |> React.string} </div>
-    <div> {"hidden: " ++ (c.hidden |> b2s) |> React.string} </div>
-    <div> {"protected: " ++ (c.password |> b2s) |> React.string} </div>
-  </div>;
-};
-
 [@react.component]
-let make = (~channels: list(Client.channel)) => {
+let make =
+    (
+      ~channels: list(Types.channelInfo),
+      ~enterChannel: Types.channelInfo => unit,
+    ) => {
+  let makePannelItem = (c: Types.channelInfo): React.element => {
+    <div className="pannel-item" onClick={_ => enterChannel(c)}>
+      <div> {c.displayName |> React.string} </div>
+      <div> {"hidden: " ++ (c.hidden |> b2s) |> React.string} </div>
+    </div>;
+  };
+
   <div className="pannel">
     <div> {"channels" |> React.string} </div>
     <div>

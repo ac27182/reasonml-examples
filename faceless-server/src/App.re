@@ -26,7 +26,7 @@ let slaveChannel: Types.channelInfo = {
   creationTimestamp: 1,
 };
 
-let con = (webSocketClient, _) => {
+let onConnection = (webSocketClient, _) => {
   // subscribe to the channel channel
   let key = "channels";
   // let field = masterChannel.id;
@@ -35,23 +35,27 @@ let con = (webSocketClient, _) => {
   let sendCurrentChannels: IO.t(unit, Redis.error) =
     subscriber
     |> Redis_IO.hgetall(~key)
-    |> IO.map((dict: Js.Dict.t(string)) =>
-         dict |> Js.Dict.values |> Json.Encode.stringArray |> Json.stringify
-       )
-    |> IO.flatMap(data => {
-         Js.log2("> in flight", data);
-         IO.suspend(() => webSocketClient |> WebSocket.Client.send(~data));
-       });
+    |> IO.map((dict: Js.Dict.t(string))
+         // json encoded channel info list
+         =>
+           Types.ChannelInfoListMessage(
+             dict |> Controller.dictToChannelInfoList,
+           )
+           |> Encoders.encodeMessage
+           |> Json.stringify
+         )
+    |> IO.flatMap(data => webSocketClient |> Controller.sendIo(data));
 
   let subscribeToChannelChannel: IO.t(string, Redis.error) =
     subscriber |> Redis_IO.subscribe(~channel="global");
 
-  let program: IO.t(string, Redis.error) =
+  let program0: IO.t(string, Redis.error) =
     IO.suspend(() => "> client connected" |> Js.log)
     |> IO.flatMap(_ => sendCurrentChannels)
     |> IO.flatMap(_ => subscribeToChannelChannel);
 
-  program |> Utils.ioRun;
+  program0 |> Utils.ioRun;
+  // webSocketClient |> Client.on(~event=`message(onMessage));
   // not ideal
   // needed to help the compiler along with the type information
   // find a way to get rid of Js.Json.parseExn...
@@ -88,4 +92,4 @@ let webSocketServer = WebSocket.Server.wss({port: 3000});
 bootstrap() |> Utils.ioRun;
 
 // engage websocket server
-webSocketServer |> WebSocket.Server.on(~event=`connection_(con));
+webSocketServer |> WebSocket.Server.on(~event=`connection_(onConnection));

@@ -9,6 +9,11 @@ redis:
 theme-list:
 	@bsb -themes > themes.txt
 
+remove:
+	@docker rm -f `docker ps -aq`
+
+redis-restart: remove redis
+
 # commands to add
 
 # brings up faceless

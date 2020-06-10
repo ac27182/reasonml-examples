@@ -16,6 +16,12 @@
   ],
   "suffix": ".bs.js",
   "namespace": true,
-  "bs-dependencies": ["reason-react", "bs-fetch", "bs-bastet", "relude"],
+  "bs-dependencies": [
+    "reason-react",
+    "bs-fetch",
+    "bs-bastet",
+    "relude",
+    "faceless-core"
+  ],
   "refmt": 3
 }

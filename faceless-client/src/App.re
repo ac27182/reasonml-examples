@@ -1,40 +1,22 @@
-let fakeChannelData: list(Client.channel) = [
-  {name: "channel0", hidden: false, password: false},
-  {name: "channel1", hidden: false, password: false},
-  {name: "channel2", hidden: false, password: false},
-  {name: "channel3", hidden: false, password: false},
-  {name: "channel4", hidden: false, password: false},
-  {name: "channel5", hidden: false, password: false},
-  {name: "channel6", hidden: false, password: false},
-  {name: "channel7", hidden: false, password: false},
-  {name: "channel8", hidden: false, password: false},
-  {name: "channel9", hidden: false, password: false},
-  {name: "channel10", hidden: false, password: false},
-  {name: "channel11", hidden: false, password: false},
-  {name: "channel12", hidden: false, password: false},
-  {name: "channel13", hidden: false, password: false},
-];
-
-let fakeChannel: Client.channel = {
-  name: "channel0",
-  hidden: false,
-  password: false,
-};
+open FacelessCore;
+open FacelessCore.Types;
+open Relude_Globals;
+open WsBrowserClient;
 
 type state = {
-  channels: list(Client.channel),
+  channels: list(Types.channelInfo),
   connections: int,
-  currentChannel: option(Client.channel),
+  currentChannel: option(Types.channelInfo),
   pannelHidden: bool,
 };
 
 type action =
-  | TogglePannel
-  | RemoveChannel(string)
-  | CreateChannel(string);
+  | ToggleSidePannel
+  | EnterChannel(Types.channelInfo)
+  | PopulateChannels(list(Types.channelInfo));
 
 let initialState: state = {
-  channels: fakeChannelData,
+  channels: List.empty,
   currentChannel: None,
   connections: 0,
   pannelHidden: false,
@@ -42,19 +24,46 @@ let initialState: state = {
 
 let reducer = (state, action) =>
   switch (action) {
-  | TogglePannel => {...state, pannelHidden: !state.pannelHidden}
-  | CreateChannel(name) =>
-    let newChannel: Client.channel = {name, hidden: false, password: false};
-    {...state, channels: state.channels |> List.append([newChannel])};
-  | RemoveChannel(_) => state //unimplemented
+  | ToggleSidePannel => {...state, pannelHidden: !state.pannelHidden}
+  | PopulateChannels(channels) => {
+      ...state,
+      channels: state.channels |> List.concat(channels),
+    } //unimplemented
+  | EnterChannel(channel) => {...state, currentChannel: Some(channel)}
   };
 
+let messageToAction = (message: Types.message) => {
+  // Js.log(message);
+  switch (message) {
+  | ChannelInfoListMessage(m) => PopulateChannels(m)
+  | ChannelInfoMessage(m) => ToggleSidePannel // unimplemented
+  };
+};
+
 [@react.component]
-let make = (~channel: option(string)) => {
+let make = (~channel: option(string), ~websocket: option(WsBrowserClient.t)) => {
   let (state, dispatch) = React.useReducer(reducer, initialState);
 
+  let enterChannel = (channel: Types.channelInfo): unit =>
+    dispatch(EnterChannel(channel));
+
+  switch (websocket) {
+  | None => "no connection passed in" |> Js.log
+  | Some(w) =>
+    w
+    |> WsBrowserClient.onmessage(~f=(event: WsBrowserClient.messageEvent) => {
+         let {data} = event;
+
+         data
+         |> Js.Json.parseExn
+         |> Decoders.decodeMessage
+         |> messageToAction
+         |> dispatch;
+       })
+  };
+
   <div className="app-grid">
-    <SidePannel channels={state.channels} />
+    <SidePannel channels={state.channels} enterChannel />
     {switch (state.currentChannel) {
      | None => <Spinner />
      | Some(c) => <Channel channel=c />
