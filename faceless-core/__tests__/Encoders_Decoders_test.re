@@ -1,8 +1,6 @@
 open Types;
 open Jest;
 open Expect;
-open Decoders;
-open Encoders;
 
 // might as well save the hassle of having encoder / decoder tests and write generic testing function
 let roundTripAssertion =

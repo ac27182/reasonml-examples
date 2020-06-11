@@ -57,7 +57,7 @@ let make = (~channel: option(string), ~websocket: option(WsBrowserClient.t)) => 
          data
          |> Js.Json.parseExn
          |> Decoders.decodeMessage
-         |> messageToAction
+         |> messageToActionf
          |> dispatch;
        })
   };

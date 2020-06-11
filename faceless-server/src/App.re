@@ -1,7 +1,7 @@
-// open WebSocket;
 open FacelessCore;
 open Redis;
 open Relude_Globals;
+// open Js;
 
 module Relude_IO_Infix = {
   open Relude_IO;
@@ -31,7 +31,6 @@ let onConnection = (webSocketClient, _) => {
   let key = "channels";
   // let field = masterChannel.id;
   let subscriber = Redis.createClient({port: 6379});
-
   let sendCurrentChannels: IO.t(unit, Redis.error) =
     subscriber
     |> Redis_IO.hgetall(~key)
@@ -42,19 +41,19 @@ let onConnection = (webSocketClient, _) => {
              dict |> Controller.dictToChannelInfoList,
            )
            |> Encoders.encodeMessage
-           |> Json.stringify
+           |> Js.Json.stringify
          )
-    |> IO.flatMap(data => webSocketClient |> Controller.sendIo(data));
+    |> IO.flatMap(data => webSocketClient |> Logic.sendIo(data));
 
   let subscribeToChannelChannel: IO.t(string, Redis.error) =
     subscriber |> Redis_IO.subscribe(~channel="global");
 
   let program0: IO.t(string, Redis.error) =
     IO.suspend(() => "> client connected" |> Js.log)
-    |> IO.flatMap(_ => sendCurrentChannels)
+    // |> IO.flatMap(_ => sendCurrentChannels)
     |> IO.flatMap(_ => subscribeToChannelChannel);
 
-  program0 |> Utils.ioRun;
+  program0 |> Utils.runAndLogIo;
   // webSocketClient |> Client.on(~event=`message(onMessage));
   // not ideal
   // needed to help the compiler along with the type information
@@ -66,7 +65,7 @@ let onConnection = (webSocketClient, _) => {
 
 let bootstrap = () => {
   let field = masterChannel.id;
-  let value = masterChannel |> Encoders.encodeChannelInfo |> Json.stringify;
+  let value = masterChannel |> Encoders.encodeChannelInfo |> Js.Json.stringify;
   let key = "channels";
 
   let redisClient = Redis.createClient({port: 6379});
@@ -86,10 +85,10 @@ let bootstrap = () => {
   program;
 };
 
-let webSocketServer = WebSocket.Server.wss({port: 3000});
+let webSocketServer = Ws.Server.make({port: 3000});
 
 // run initialisation program
-bootstrap() |> Utils.ioRun;
+bootstrap() |> Utils.runAndLogIo;
 
 // engage websocket server
-webSocketServer |> WebSocket.Server.on(~event=`connection_(onConnection));
+webSocketServer |> Ws.Server.on(~event=`connection_(onConnection));

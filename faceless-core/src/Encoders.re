@@ -1,5 +1,5 @@
 open Types;
-open Json.Encode;
+open Json_encode;
 open Utils;
 
 let encodeChannelInfo = (channelInfo: Types.channelInfo): Js.Json.t => {

@@ -23,8 +23,7 @@
     "relude",
     "bs-express",
     "bs-fetch",
-    "faceless-core",
-    "@glennsl/bs-json"
+    "faceless-core"
   ],
   "bs-dev-dependencies": ["@glennsl/bs-jest"],
   "warnings": {

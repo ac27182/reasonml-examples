@@ -1,5 +1,5 @@
 open Types;
-open Json.Decode;
+open Json_decode;
 open Utils;
 exception InvalidPayloadType(string);
 

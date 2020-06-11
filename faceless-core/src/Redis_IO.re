@@ -16,6 +16,24 @@ let hget =
 let hgetall = (client: Client.t, ~key: string): IO.t('a, 'e) =>
   client |> Redis.hgetall(~key) |> toAsyncIo;
 
+// list ops
+let lrange =
+    (client: Client.t, ~key: string, ~start: int, ~stop: int)
+    : IO.t(list(string), error) =>
+  client
+  |> Redis.lrange(~key, ~start, ~stop)
+  |> toAsyncIo
+  |> IO.map(lhs => lhs |> List.fromArray);
+
+let llen = (client: Client.t, ~key: string): IO.t(int, error) =>
+  client |> Redis.llen(~key) |> toAsyncIo;
+
+let lpush = (client: Client.t, ~key: string, ~item: string): IO.t(int, error) =>
+  client |> Redis.lpush(~key, ~item) |> toAsyncIo;
+
+let lpop = (client: Client.t, ~key: string): IO.t(string, error) =>
+  client |> Redis.lpop(~key) |> toAsyncIo;
+
 // pubsub ops
 let subscribe = (client: Client.t, ~channel: string): IO.t('a, 'e) =>
   client |> Redis.subscribe(~channel) |> toAsyncIo;
