@@ -1,39 +1,25 @@
-// not needed anymore
-// type clientInfo = {
-//   id: string,
-//   connectedChannels: list(string),
-// };
-
-// not needed anymore
-// type client = {
-//   clientInfo,
-//   connection: WebSocket.Client.t,
-// };
-
-// not needed anymore
-// type state = {
-//   channelPool: list(channel),
-//   clientPool: list(client),
-// };
-
-// not needed anymore
-// type channel = {channelInfo};
-
 type textMessage = {
   id: string,
-  clientId: string,
-  creationTimestamp: int,
+  authorId: string,
   data: string,
+  creationTimestamp: int,
 };
 
 type channelInfo = {
-  displayName: string,
   id: string,
+  displayName: string,
   hidden: bool,
   password: option(string),
   creationTimestamp: int,
 };
 
+type user = {
+  id: string,
+  creationTimestamp: int,
+};
+
 type message =
   | ChannelInfoMessage(channelInfo)
-  | ChannelInfoListMessage(list(channelInfo));
+  | ChannelInfoListMessage(list(channelInfo))
+  | TextMessageMessage(textMessage)
+  | TextMessageListMessage(list(textMessage));

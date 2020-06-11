@@ -1,12 +1,7 @@
 module Client = {
   type t;
 
-  // incomplete list of server options
-  type serverOptions = {port: int};
-
-  type messageEvent = {data: string};
-
-  [@bs.new] [@bs.module] external wsc: string => t = "ws";
+  [@bs.new] [@bs.module] external make: string => t = "ws";
 
   [@bs.send]
   external on:
@@ -26,8 +21,10 @@ module Client = {
 module Server = {
   type t;
 
-  [@bs.new] [@bs.module "ws"]
-  external wss: Client.serverOptions => t = "Server";
+  // (very) incomplete list of server options
+  type serverOptions = {port: int};
+
+  [@bs.new] [@bs.module "ws"] external make: serverOptions => t = "Server";
 
   [@bs.send]
   external on:
