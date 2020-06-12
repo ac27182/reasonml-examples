@@ -1,3 +1,0 @@
-dependencies
-
-- bs-redis
