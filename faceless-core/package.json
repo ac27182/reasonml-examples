@@ -14,15 +14,23 @@
   "license": "MIT",
   "devDependencies": {
     "@glennsl/bs-jest": "^0.5.1",
-    "bs-platform": "^7.1.1"
-  },
-  "dependencies": {
     "@glennsl/bs-json": "^5.0.2",
+    "bs-platform": "^7.1.1",
     "bs-bastet": "^1.2.5",
     "bs-fetch": "^0.6.1",
     "bs-json": "^1.0.1",
-    "redis": "^3.0.2",
     "relude": "^0.63.1",
+    "redis": "^3.0.2",
+    "ws": "^7.3.0"
+  },
+  "peerDependencies": {
+    "@glennsl/bs-json": "^5.0.2",
+    "bs-platform": "^7.1.1",
+    "bs-bastet": "^1.2.5",
+    "bs-fetch": "^0.6.1",
+    "bs-json": "^1.0.1",
+    "relude": "^0.63.1",
+    "redis": "^3.0.2",
     "ws": "^7.3.0"
   }
 }

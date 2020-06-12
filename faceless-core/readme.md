@@ -1,3 +1,3 @@
 # faceless core
 
-- core module containing binding, encoders and types to by used in the cliend and server side application
+- core module containing bindings, encoders, types and utility functions to be used in in the client / server
