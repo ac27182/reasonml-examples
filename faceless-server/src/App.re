@@ -1,92 +1,190 @@
 open FacelessCore;
 open Redis;
 open Relude_Globals;
-// open Js;
+open Relude_IO;
+open Relude_List.IO;
+open Logic;
+open FacelessCore.Types;
+// open Redis.Client;
 
-module Relude_IO_Infix = {
-  open Relude_IO;
+// -- topics
+// global
+// channel/$channelId
 
-  let (>>=) = flatMap;
-  let (>>) = andThen;
+let bootstrapProgram = {
+  // constants used in the progam
+  let globalChannel: Types.channelInfo = {
+    id: Uuid.v4(),
+    displayName: "global",
+    hidden: false,
+    password: None,
+    creationTimestamp: Logic.dateGen(),
+  };
+  let clientOptions: Redis.clientOptions = {port: 6379};
+  let client = Redis.createClient(clientOptions);
+  let channel = globalChannel;
+
+  // clears redis of any left over channels or messages
+  let wipeRedis =
+    client
+    |> getAllChannels
+    >>= (
+      list =>
+        list
+        |> List.map((channel: Types.channelInfo) => channel.id)
+        |> traverse(id => client |> Redis_IO.del(~key=id))
+    )
+    |> IO.map(_ => "> redis wiped" |> Js.log);
+
+  // creates a global channel and logs out to the console
+  let createGlobalChannel =
+    client
+    |> createChannel(~channel)
+    |> IO.map(_ => "> global channel created" |> Js.log);
+
+  wipeRedis >>= (_ => createGlobalChannel) >>= (_ => client |> Redis_IO.quit);
 };
 
-let masterChannel: Types.channelInfo = {
-  id: "924b48ac-39e1-46ab-bc23-b303f7c29599",
-  displayName: "master",
-  hidden: false,
-  password: None,
-  creationTimestamp: 1.0,
+let connectionProgram = (wsClient: Ws.Client.t, _: Fetch.Request.t): unit => {
+  let sendChannelsIo = (wsClient: Ws.Client.t, redisClient: Redis.Client.t) =>
+    redisClient
+    |> getAllChannels
+    >>= (
+      channels => {
+        let data: string =
+          Types.ChannelInfoListMessage(channels)
+          |> Encoders.encodeMessage
+          |> Js.Json.stringify;
+        wsClient |> sendMessage(~data);
+      }
+    );
+
+  let subscribef = (wsClient: Ws.Client.t, redisClient: Redis.Client.t) => {
+    let subscriber = redisClient |> Redis_IO.subscribe(~channel="global");
+    // | `subscribe((string, int) => unit)
+    let onSubscribe = (_: string, _: int): unit =>
+      redisClient
+      |> sendChannelsIo(wsClient)
+      |> IO.unsafeRunAsync(
+           fun
+           | Ok(_v) => "client successfully joined global channel" |> Js.log
+           | Error(_e) =>
+             "client failed to subscribe to global channel" |> Js.log,
+         );
+
+    // | `unsubscribe((string, int) => unit)
+    let onUnsubscribe = (_: string, _: int): unit => {
+      "> client unsubscribed" |> Js.log;
+    };
+    // | `message((string, string) => unit)
+    let onMessage = (channel: string, message: string): unit => {
+      // broadcast message to subscribed client
+      wsClient
+      |> Logic.sendMessage(~data=message)
+      |> IO.unsafeRunAsync(
+           fun
+           | Ok(_) => "message successfully sent to client" |> Js.log
+           | Error(_) => "message did not send" |> Js.log,
+         );
+    };
+    ();
+    subscriber
+    >>= (
+      _ =>
+        [
+          `message(onMessage),
+          `subscribe(onSubscribe),
+          `unsubscribe(onUnsubscribe),
+        ]
+        |> traverse(event => IO.suspend(() => Redis.Client.on(~event)))
+    );
+  };
+
+  subscribef(wsClient, createClient({port: 6379}))
+  |> IO.unsafeRunAsync(
+       fun
+       | Ok(_) => "connection was successful" |> Js.log
+       | Error(_) => "connection was unsuccessful" |> Js.log,
+     );
 };
 
-let slaveChannel: Types.channelInfo = {
-  id: "9c5e0ebd-bae9-4d18-a7f4-0426963e35c9",
-  displayName: "slave",
-  hidden: false,
-  password: None,
-  creationTimestamp: 1.0,
+// message handler
+let onMessage = (message: string): unit => {
+  let decodedMessage: Types.message =
+    message |> Js.Json.parseExn |> Decoders.decodeMessage;
+  let redisClient = createClient({port: 6379});
+
+  switch (decodedMessage) {
+  | CreateChannelRequestMessage(req) =>
+    "recieved channel info message, make the channel and broadcast" |> Js.log;
+    let newChannel: Types.channelInfo = {
+      id: Uuid.v4(),
+      displayName: req.displayName,
+      hidden: req.hidden,
+      password: req.password,
+      creationTimestamp: Js.Date.now(),
+    };
+    redisClient
+    |> Logic.createChannel(~channel=newChannel)
+    |> IO.unsafeRunAsync(
+         fun
+         | Ok(_d) => "connection was successful" |> Js.log
+         | Error(_e) => "connection was unsuccessful" |> Js.log,
+       );
+  | TextMessageMessage(_message) =>
+    "recieved text message, persist and broadcast" |> Js.log
+  | _ => "ignore, we dont handle those messages on the server" |> Js.log
+  };
 };
 
-let onConnection = (webSocketClient, _) => {
-  // subscribe to the channel channel
-  let key = "channels";
-  // let field = masterChannel.id;
-  let subscriber = Redis.createClient({port: 6379});
-  // let sendCurrentChannels: IO.t(unit, Redis.error) =
-  //   subscriber
-  //   |> Redis_IO.hgetall(~key)
-  //   |> IO.map((dict: Js.Dict.t(string))
-  //        // json encoded channel info list
-  //        =>
-  //          Types.ChannelInfoListMessage(dict |> Logic.dictToChannelInfoList)
-  //          |> Encoders.encodeMessage
-  //          |> Js.Json.stringify
-  //        )
-  //   |> IO.flatMap(data => webSocketClient |> Logic.sendIo(data));
+type csPath = (Ws.Server.t, Ws.Client.t);
 
-  let subscribeToChannelChannel: IO.t(string, Redis.error) =
-    subscriber |> Redis_IO.subscribe(~channel="global");
+let alloc =
+  IO.suspendWithVoid(() => Ws.Server.make({port: 3000}))
+  >>= (
+    server =>
+      IO.suspendWithVoid(() => Ws.Client.make("ws://localhost:3000"))
+      |> IO.map(client => (server, client))
+  )
+  |> IO.mapError(_ => Redis.NoKey);
 
-  let program0: IO.t(string, Redis.error) =
-    IO.suspend(() => "> client connected" |> Js.log)
-    // |> IO.flatMap(_ => sendCurrentChannels)
-    |> IO.flatMap(_ => subscribeToChannelChannel);
+let program0 =
+  bootstrapProgram
+  >>= (_ => alloc)
+  >>= (
+    tuple => {
+      let (server, client) = tuple;
+      IO.suspend(_ =>
+        server |> Ws.Server.on(~event=`connection_(connectionProgram))
+      )
+      >>= (
+        _ =>
+          IO.suspend(_ =>
+            client |> Ws.Client.on(~event=`message(m => m |> Js.log))
+          )
+      );
+    }
+  );
+// |> IO.unsafeRunAsync(
+//      fun
+//      | Ok(_) => "success" |> Js.log
+//      | Error(_) => "an error occurred" |> Js.log,
+//    );
 
-  program0 |> Utils.runAndLogIo;
-  // webSocketClient |> Client.on(~event=`message(onMessage));
-  // not ideal
-  // needed to help the compiler along with the type information
-  // find a way to get rid of Js.Json.parseExn...
-  //  |> Array.map((value: string) =>
-  //       value |> Js.Json.parseExn |> Types.Decoders.channelInfo
-  //     )
-};
+let resource = IO.suspendWithVoid(() => Ws.Server.make({port: 3000}));
 
-let bootstrap = () => {
-  let field = masterChannel.id;
-  let value = masterChannel |> Encoders.encodeChannelInfo |> Js.Json.stringify;
-  let key = "channels";
+let program =
+  resource
+  >>= (
+    wsServer =>
+      IO.suspendWithVoid(() =>
+        wsServer |> Ws.Server.on(~event=`connection_(connectionProgram))
+      )
+  );
 
-  let redisClient = Redis.createClient({port: 6379});
-
-  // set master channel
-  let setIo = redisClient |> Redis_IO.hset(~key, ~field, ~value);
-
-  // get master channel
-  let getIo = redisClient |> Redis_IO.hget(~key, ~field);
-
-  // flatmap into a single program
-  let program = setIo |> IO.flatMap(_ => getIo);
-
-  // log to console
-  "> master channel set" |> Js.log;
-
-  program;
-};
-
-let webSocketServer = Ws.Server.make({port: 3000});
-
-// run initialisation program
-bootstrap() |> Utils.runAndLogIo;
-
-// engage websocket server
-webSocketServer |> Ws.Server.on(~event=`connection_(onConnection));
+program
+|> IO.unsafeRunAsync(
+     fun
+     | Ok(_) => "success" |> Js.log
+     | Error(_) => "an error occurred" |> Js.log,
+   );

@@ -89,28 +89,28 @@ let deleteChannel = (client: Redis.Client.t, ~channel: Types.channelInfo) =>
   |> Redis_IO.hdel(~key="channels", ~field=channel.id)
   |> IO.flatMap(_ => client |> Redis_IO.del(~key=channel.id));
 
-let sendIo = (data: string, client: Ws.Client.t) =>
+let sendMessage = (client: Ws.Client.t, ~data: string) =>
   IO.suspend(() => client |> Ws.Client.send(~data));
 
 // small integration
 open Redis;
 let client = Redis.createClient({port: 6379});
 open Types;
-let globalChannel: Types.channelInfo = {
-  id: Uuid.v4(),
-  hidden: false,
-  password: None,
-  displayName: "global",
-  creationTimestamp: dateGen(),
-};
+// let globalChannel: Types.channelInfo = {
+//   id: Uuid.v4(),
+//   hidden: false,
+//   password: None,
+//   displayName: "global",
+//   creationTimestamp: dateGen(),
+// };
 
-let newChannel: Types.channelInfo = {
-  id: Uuid.v4(),
-  hidden: false,
-  password: None,
-  displayName: "new-channel",
-  creationTimestamp: dateGen(),
-};
+// let newChannel: Types.channelInfo = {
+//   id: Uuid.v4(),
+//   hidden: false,
+//   password: None,
+//   displayName: "new-channel",
+//   creationTimestamp: dateGen(),
+// };
 
 // client |> Redis_IO.hdel(~key="global", ~field="xxx") |> Utils.runAndLogIo;
 
@@ -126,4 +126,19 @@ let newChannel: Types.channelInfo = {
 //      |> IO.map(c => c |> Js.log)
 //    )
 // |> Utils.runAndLogIo;
-let x = "";
+
+// open Relude_List_Specializations;
+open Relude_IO;
+open Relude_List;
+
+let program =
+  client
+  |> getAllChannels
+  >>= (
+    list =>
+      list
+      |> List.map((channel: Types.channelInfo) => channel.id)
+      |> IO.traverse(id => client |> Redis_IO.del(~key=id))
+  );
+
+program |> Utils.runAndLogIo;

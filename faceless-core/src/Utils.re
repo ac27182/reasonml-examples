@@ -32,3 +32,5 @@ let string_of_option = (opt: option(string)): string =>
   | None => ""
   | Some(p) => p
   };
+
+let logIo = (message: string) => IO.suspendWithVoid(() => message |> Js.log);

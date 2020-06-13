@@ -23,12 +23,10 @@
     "bs-bastet": "^1.2.5",
     "bs-express": "^1.0.1",
     "bs-fetch": "^0.5.2",
-    "bs-uuid": "^0.3.1",
     "faceless-core": "file:../faceless-core",
     "redis": "^3.0.2",
     "relude": "^0.63.1",
     "uuid": "^8.1.0",
-    "uuidv4": "^6.1.0",
     "ws": "^7.3.0"
   },
   "jest": {

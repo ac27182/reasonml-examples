@@ -15,6 +15,7 @@ module Client = {
       t,
       ~event: [@bs.string] [
                 | `subscribe((string, int) => unit)
+                  // channel, message
                 | `unsubscribe((string, int) => unit)
                 | `message((string, string) => unit)
               ]

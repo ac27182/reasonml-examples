@@ -13,12 +13,19 @@ type channelInfo = {
   creationTimestamp: float,
 };
 
+type createChannelRequest = {
+  displayName: string,
+  hidden: bool,
+  password: option(string),
+};
+
 type user = {
   id: string,
   creationTimestamp: float,
 };
 
 type message =
+  | CreateChannelRequestMessage(createChannelRequest)
   | ChannelInfoMessage(channelInfo)
   | ChannelInfoListMessage(list(channelInfo))
   | TextMessageMessage(textMessage)
