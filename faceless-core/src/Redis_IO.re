@@ -10,20 +10,31 @@ let hset =
 
 let hget =
     (client: Client.t, ~key: string, ~field: string)
-    : IO.t(string, Redis.error) =>
-  client |> Redis.hget(~key, ~field) |> toAsyncIo;
+    : IO.t(option(string), Redis.error) =>
+  client
+  |> Redis.hget(~key, ~field)
+  |> toAsyncIo
+  |> IO.map(r => r |> Js.Nullable.toOption);
 
 let hgetall = (client: Client.t, ~key: string): IO.t('a, 'e) =>
-  client |> Redis.hgetall(~key) |> toAsyncIo;
+  client
+  |> Redis.hgetall(~key)
+  |> toAsyncIo
+  |> IO.map(r => r |> Js.Nullable.toOption);
+
+let hdel = (client: Client.t, ~key: string, ~field: string): IO.t('a, 'e) =>
+  client |> Redis.hdel(~key, ~field) |> toAsyncIo;
 
 // list ops
 let lrange =
     (client: Client.t, ~key: string, ~start: int, ~stop: int)
-    : IO.t(list(string), error) =>
+    : IO.t(option(list(string)), error) =>
   client
   |> Redis.lrange(~key, ~start, ~stop)
   |> toAsyncIo
-  |> IO.map(lhs => lhs |> List.fromArray);
+  |> IO.map(lhs =>
+       lhs |> Js.Nullable.toOption |> Option.map(a => a |> List.fromArray)
+     );
 
 let llen = (client: Client.t, ~key: string): IO.t(int, error) =>
   client |> Redis.llen(~key) |> toAsyncIo;
@@ -48,3 +59,7 @@ let publish =
 // client ops
 let quit = (client: Client.t): IO.t('a, 'e) =>
   client |> Redis.quit |> toAsyncIo;
+
+// basic redis
+let del = (client: Client.t, ~key: string): IO.t('a, 'e) =>
+  client |> Redis.del(~key) |> toAsyncIo;

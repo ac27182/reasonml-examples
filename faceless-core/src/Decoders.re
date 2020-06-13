@@ -9,7 +9,8 @@ let decodeChannelInfo = (json: Js.Json.t): Types.channelInfo => {
     id: json |> field("id", string),
     hidden: json |> field("hidden", bool),
     password: json |> field("password", string) |> option_of_string,
-    creationTimestamp: json |> field("creationTimestamp", int),
+    creationTimestamp:
+      json |> field("creationTimestamp", int) |> float_of_int,
   };
 };
 
@@ -17,7 +18,7 @@ let decodeTextMessage = (json: Js.Json.t): Types.textMessage => {
   id: json |> field("id", string),
   authorId: json |> field("authorId", string),
   data: json |> field("data", string),
-  creationTimestamp: json |> field("creationTimestamp", int),
+  creationTimestamp: json |> field("creationTimestamp", int) |> float_of_int,
 };
 
 // redis dict of channel info is a bit of a pain to parse

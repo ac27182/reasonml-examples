@@ -2,7 +2,7 @@ type textMessage = {
   id: string,
   authorId: string,
   data: string,
-  creationTimestamp: int,
+  creationTimestamp: float,
 };
 
 type channelInfo = {
@@ -10,12 +10,12 @@ type channelInfo = {
   displayName: string,
   hidden: bool,
   password: option(string),
-  creationTimestamp: int,
+  creationTimestamp: float,
 };
 
 type user = {
   id: string,
-  creationTimestamp: int,
+  creationTimestamp: float,
 };
 
 type message =

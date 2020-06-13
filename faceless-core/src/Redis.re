@@ -1,4 +1,6 @@
-type error;
+type error =
+  | NoKey
+  | FieldAlreadyExists(string);
 
 type callback('a) = (Js.Null.t(error), 'a) => unit;
 
@@ -55,13 +57,24 @@ external hset:
 
 [@bs.send]
 external hget:
-  (Client.t, ~key: string, ~field: string, callback(string)) => unit =
+  (
+    Client.t,
+    ~key: string,
+    ~field: string,
+    callback(Js.Nullable.t(string))
+  ) =>
+  unit =
   "hget";
 
 [@bs.send]
 external hgetall:
-  (Client.t, ~key: string, callback(Js.Dict.t(string))) => unit =
+  (Client.t, ~key: string, callback(Js.Nullable.t(Js.Dict.t(string)))) =>
+  unit =
   "hgetall";
+
+[@bs.send]
+external hdel: (Client.t, ~key: string, ~field: string, callback(int)) => unit =
+  "hdel";
 
 [@bs.send]
 external lrange:
@@ -70,7 +83,7 @@ external lrange:
     ~key: string,
     ~start: int,
     ~stop: int,
-    callback(Js.Array.t(string))
+    callback(Js.Nullable.t(Js.Array.t(string)))
   ) =>
   unit =
   "lrange";
@@ -84,7 +97,9 @@ external llen: (Client.t, ~key: string, callback(int)) => unit = "llen";
 external lpush: (Client.t, ~key: string, ~item: string, callback(int)) => unit =
   "lpush";
 
-// lpop(key: string, cb?: Callback<string>): boolean
-
 [@bs.send]
 external lpop: (Client.t, ~key: string, callback(string)) => unit = "lpop";
+
+// kv
+[@bs.send]
+external del: (Client.t, ~key: string, callback(int)) => unit = "del";

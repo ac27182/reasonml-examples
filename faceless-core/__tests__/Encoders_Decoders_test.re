@@ -41,7 +41,7 @@ describe("channelInfo", () => {
       id: "xxxx-xxxx-xxxx-xxxx",
       hidden: false,
       password: None,
-      creationTimestamp: 1,
+      creationTimestamp: 1.0,
     };
 
     roundTripAssertion(
@@ -69,7 +69,7 @@ describe("channelInfo", () => {
         id: "xxxx-xxxx-xxxx-xxxx",
         authorId: "yyyy-yyyy-yyyy-yyyy",
         data: "hello world",
-        creationTimestamp: 2,
+        creationTimestamp: 2.0,
       };
 
       roundTripAssertion(
@@ -105,7 +105,7 @@ describe("channelInfo", () => {
             id: "xxxx-xxxx-xxxx-xxxx",
             hidden: false,
             password: None,
-            creationTimestamp: 1,
+            creationTimestamp: 1.0,
           });
 
         roundTripAssertion(
@@ -150,14 +150,14 @@ describe("channelInfo", () => {
               id: "xxxx-xxxx-xxxx-xxxx",
               hidden: false,
               password: None,
-              creationTimestamp: 1,
+              creationTimestamp: 1.0,
             },
             {
               displayName: "global0",
               id: "xxxx-xxxx-xxxx-yyyy",
               hidden: false,
               password: None,
-              creationTimestamp: 1,
+              creationTimestamp: 1.0,
             },
           ]);
 

@@ -10,7 +10,7 @@ let encodeChannelInfo = (channelInfo: Types.channelInfo): Js.Json.t => {
     ("id", id |> string),
     ("hidden", hidden |> bool),
     ("password", password |> string_of_option |> string),
-    ("creationTimestamp", creationTimestamp |> int),
+    ("creationTimestamp", creationTimestamp |> int_of_float |> int),
   ]
   |> object_;
 };
@@ -22,7 +22,7 @@ let encodeTextMessage = (textMessage: Types.textMessage): Js.Json.t => {
     ("id", id |> string),
     ("authorId", authorId |> string),
     ("data", data |> string),
-    ("creationTimestamp", creationTimestamp |> int),
+    ("creationTimestamp", creationTimestamp |> int_of_float |> int),
   ]
   |> object_;
 };
