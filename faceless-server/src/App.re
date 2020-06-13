@@ -15,7 +15,7 @@ let masterChannel: Types.channelInfo = {
   displayName: "master",
   hidden: false,
   password: None,
-  creationTimestamp: 1,
+  creationTimestamp: 1.0,
 };
 
 let slaveChannel: Types.channelInfo = {
@@ -23,7 +23,7 @@ let slaveChannel: Types.channelInfo = {
   displayName: "slave",
   hidden: false,
   password: None,
-  creationTimestamp: 1,
+  creationTimestamp: 1.0,
 };
 
 let onConnection = (webSocketClient, _) => {
@@ -31,19 +31,17 @@ let onConnection = (webSocketClient, _) => {
   let key = "channels";
   // let field = masterChannel.id;
   let subscriber = Redis.createClient({port: 6379});
-  let sendCurrentChannels: IO.t(unit, Redis.error) =
-    subscriber
-    |> Redis_IO.hgetall(~key)
-    |> IO.map((dict: Js.Dict.t(string))
-         // json encoded channel info list
-         =>
-           Types.ChannelInfoListMessage(
-             dict |> Controller.dictToChannelInfoList,
-           )
-           |> Encoders.encodeMessage
-           |> Js.Json.stringify
-         )
-    |> IO.flatMap(data => webSocketClient |> Logic.sendIo(data));
+  // let sendCurrentChannels: IO.t(unit, Redis.error) =
+  //   subscriber
+  //   |> Redis_IO.hgetall(~key)
+  //   |> IO.map((dict: Js.Dict.t(string))
+  //        // json encoded channel info list
+  //        =>
+  //          Types.ChannelInfoListMessage(dict |> Logic.dictToChannelInfoList)
+  //          |> Encoders.encodeMessage
+  //          |> Js.Json.stringify
+  //        )
+  //   |> IO.flatMap(data => webSocketClient |> Logic.sendIo(data));
 
   let subscribeToChannelChannel: IO.t(string, Redis.error) =
     subscriber |> Redis_IO.subscribe(~channel="global");
