@@ -2,91 +2,20 @@ body {
   margin: 0;
 }
 
-.app-grid {
-  height: 100vh;
-  display: grid;
-  grid-template-rows: 1fr;
-  grid-template-columns: minmax(200px, 450px) minmax(450px, 1fr);
+::-webkit-scrollbar {
+  width: 5px;
 }
 
-/* left hand pannel */
-.pannel {
-  display: grid;
-  grid-template-rows: 50px 25px 1fr;
-  grid-template-columns: 1fr;
-  overflow-y: hidden;
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
 }
 
-.pannel-item-wrapper {
-  overflow-x: hidden;
-  overflow-y: scroll;
+/* Handle */
+::-webkit-scrollbar-thumb {
 }
 
-.pannel-item {
-  padding: 10px;
-  border: 0.25px black solid;
-  margin: 1px;
-}
-
-/* channels */
-.spinner-container {
-  overflow-x: hidden;
-  overflow-y: hidden;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.channel-container {
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-template-rows: 50px 1fr 50px;
-}
-
-.centered-item {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-/* animation */
-.elipse {
-  width: 100px;
-  height: 200px;
-  border: 0.5px black solid;
-  border-radius: 50%;
-  position: absolute;
-}
-.rotation0 {
-  animation: rotation 8s infinite linear;
-}
-.rotation1 {
-  animation: rotation 16s infinite linear;
-}
-.rotation2 {
-  animation: rotation 24s infinite linear;
-}
-.rotation3 {
-  animation: rotation 32s infinite linear;
-}
-.rotation4 {
-  animation: rotation 40s infinite linear;
-}
-.rotation5 {
-  animation: rotation 48s infinite linear;
-}
-.rotation6 {
-  animation: rotation 56s infinite linear;
-}
-.rotation7 {
-  animation: rotation 64s infinite linear;
-}
-
-@keyframes rotation {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(359deg);
-  }
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #32e0c4;
 }

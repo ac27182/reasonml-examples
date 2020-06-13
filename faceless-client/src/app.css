@@ -1,0 +1,67 @@
+/* app */
+.app-container {
+  height: 100vh;
+  display: grid;
+  grid-template-rows: 40px 1fr;
+  grid-template-columns: minmax(200px, 450px) minmax(450px, 1fr);
+}
+
+/* spinner */
+.spinner-container {
+  overflow-x: hidden;
+  overflow-y: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.centered-item {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+}
+.centered-item {
+  background-color: rgba(100, 100, 100, 0.05);
+}
+
+.elipse {
+  box-shadow: 3px 3px 6px 0 rgba(0, 0, 0, 0.1);
+  width: 100px;
+  height: 200px;
+  border: 0.5px #b3b3b3 solid;
+  border-radius: 50%;
+  position: absolute;
+}
+.rotation1 {
+  animation: rotation 16s infinite linear;
+}
+.rotation2 {
+  animation: rotation 24s infinite linear;
+}
+.rotation3 {
+  animation: rotation 32s infinite linear;
+}
+.rotation4 {
+  animation: rotation 40s infinite linear;
+}
+.rotation5 {
+  animation: rotation 48s infinite linear;
+}
+.rotation6 {
+  animation: rotation 56s infinite linear;
+}
+.rotation7 {
+  animation: rotation 64s infinite linear;
+}
+
+@keyframes rotation {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(359deg);
+  }
+}

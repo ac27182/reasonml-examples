@@ -1,0 +1,63 @@
+.channel-pannel-container {
+  display: grid;
+  grid-template-rows: 50px 1fr 70px;
+  grid-template-columns: 1fr;
+  overflow-y: hidden;
+}
+
+.channel-header-container {
+  border: 1px solid #eeeeee;
+}
+
+.message-display-container {
+  display: flex;
+  flex-direction: column-reverse;
+  overflow-y: scroll;
+}
+
+.message-display-item-container {
+  display: grid;
+  grid-template-rows: 15px 15px 1fr 15px;
+  grid-template-columns: 1fr;
+  overflow-y: visible;
+
+  font-size: 12px;
+  min-height: 50px;
+  margin: 10px 50px;
+  border: 1px solid #eeeeee;
+  transition: background 0.2s ease-in-out;
+
+  /* complex... */
+  /* offset-x | offset-y | blur-radius | spread-radius | color */
+  box-shadow: 3px 3px 6px 0 rgba(0, 0, 0, 0.1);
+}
+
+/* message input bar */
+.message-input-bar-container {
+  display: grid;
+  grid-template-rows: 1fr;
+  grid-template-columns: 1fr 100px;
+  background-color: #eeeeee;
+}
+
+.message-input-bar-container > input {
+  border-radius: 20px;
+  margin: 15px 5px;
+  border: 1px solid #eeeeee;
+  transition: background 0.5s ease-in-out;
+}
+
+.message-input-bar-container > input:hover {
+  background-color: #32e0c4;
+}
+
+.message-input-bar-container > button {
+  border-radius: 20px;
+  margin: 15px 5px;
+  background-color: white;
+  border: 1px solid #eeeeee;
+  transition: background 0.5s ease-in-out;
+}
+.message-input-bar-container > button:hover {
+  background-color: #32e0c4;
+}
