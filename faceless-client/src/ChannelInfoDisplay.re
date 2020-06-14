@@ -6,7 +6,11 @@ module ChannelInfoItem = {
   let make = (~channelInfo: Types.channelInfo) => {
     let {id, displayName, hidden, creationTimestamp} = channelInfo;
 
-    <div className="channel-info-item-container">
+    let appDispatch = React.useContext(ContextProvider.appContext);
+
+    <div
+      className="channel-info-item-container"
+      onClick={_ => appDispatch |> ClientLogic.enterChannel(channelInfo)}>
       <div> {"image" |> React.string} </div>
       <div className="f">
         <div> {displayName |> React.string} </div>
@@ -27,27 +31,19 @@ module ChannelInfoItem = {
   };
 };
 
-let fakeChannelInfo: Types.channelInfo = {
-  id: Uuid.v4(),
-  displayName: "channel-" ++ Uuid.v4(),
-  hidden: false,
-  password: None,
-  creationTimestamp: Js.Date.now(),
-};
+// let fakeChannelInfo: Types.channelInfo = {
+//   id: Uuid.v4(),
+//   displayName: "channel-" ++ Uuid.v4(),
+//   hidden: false,
+//   password: None,
+//   creationTimestamp: Js.Date.now(),
+// };
 
 [@react.component]
-let make = () =>
+let make = (~channels: list(Types.channelInfo)) =>
   <div className="channel-info-display-container">
-    <ChannelInfoItem channelInfo=fakeChannelInfo />
-    <ChannelInfoItem channelInfo=fakeChannelInfo />
-    <ChannelInfoItem channelInfo=fakeChannelInfo />
-    <ChannelInfoItem channelInfo=fakeChannelInfo />
-    <ChannelInfoItem channelInfo=fakeChannelInfo />
-    <ChannelInfoItem channelInfo=fakeChannelInfo />
-    <ChannelInfoItem channelInfo=fakeChannelInfo />
-    <ChannelInfoItem channelInfo=fakeChannelInfo />
-    <ChannelInfoItem channelInfo=fakeChannelInfo />
-    <ChannelInfoItem channelInfo=fakeChannelInfo />
-    <ChannelInfoItem channelInfo=fakeChannelInfo />
-    <ChannelInfoItem channelInfo=fakeChannelInfo />
+    {channels
+     |> List.map(channelInfo => <ChannelInfoItem channelInfo />)
+     |> Array.of_list
+     |> React.array}
   </div>;

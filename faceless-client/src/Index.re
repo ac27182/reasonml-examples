@@ -1,3 +1,3 @@
-[%bs.raw {|require("./index.css")|}];
+[%bs.raw {|require("./css/index.css")|}];
 
 ReactDOMRe.renderToElementWithId(<MasterRouter />, "root");

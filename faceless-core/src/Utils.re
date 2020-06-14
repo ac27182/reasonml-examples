@@ -33,4 +33,9 @@ let string_of_option = (opt: option(string)): string =>
   | Some(p) => p
   };
 
+// let genTextMessage = () => ();
+// let genChannelInfo = () => ();
+// let genUser = () => ();
+// let genMessage = () => ();
+
 let logIo = (message: string) => IO.suspendWithVoid(() => message |> Js.log);

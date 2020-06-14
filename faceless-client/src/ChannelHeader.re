@@ -2,7 +2,15 @@ open FacelessCore;
 open FacelessCore.Types;
 
 [@react.component]
-let make = (~channelInfo: Types.channelInfo) =>
+let make = (~currentChannel: Types.channelInfo) => {
+  let dispatch = React.useContext(ContextProvider.appContext);
   <div className="channel-header-container ">
-    {channelInfo.displayName ++ "|" ++ channelInfo.id |> React.string}
+    <div>
+      {currentChannel.displayName ++ "|" ++ currentChannel.id |> React.string}
+    </div>
+    <button onClick={_ => dispatch |> ClientLogic.leaveChannel}>
+      {"minimise" |> React.string}
+    </button>
+    <button> {"disconnect" |> React.string} </button>
   </div>;
+};

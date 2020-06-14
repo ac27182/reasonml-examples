@@ -12,8 +12,8 @@ body {
 }
 
 /* Handle */
-::-webkit-scrollbar-thumb {
-}
+/* ::-webkit-scrollbar-thumb {
+} */
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {

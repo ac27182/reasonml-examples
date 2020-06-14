@@ -18,15 +18,19 @@ let dictToChannelInfoList = (dict: Js.Dict.t(string)) =>
 
 // gets all persisted channels from redis
 let getAllChannels =
-    (client: Redis.Client.t): IO.t(list(Types.channelInfo), Redis.error) =>
+    (client: Redis.Client.t): IO.t(list(Types.channelInfo), Redis.error) => {
+  "fetching channels" |> Js.log;
   client
   |> Redis_IO.hgetall(~key="channels")
   |> IO.map((dict: option(Js.Dict.t(string))) =>
        switch (dict) {
        | None => List.empty
-       | Some(d) => d |> dictToChannelInfoList
+       | Some(d) =>
+         d |> dictToChannelInfoList |> Js.log;
+         d |> dictToChannelInfoList;
        }
      );
+};
 
 // gets all persisteted text messages for a particular channel
 let getAllTextMessages =

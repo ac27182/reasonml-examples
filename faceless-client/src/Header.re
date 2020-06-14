@@ -1,4 +1,4 @@
-[%bs.raw {|require("./header.css")|}];
+[%bs.raw {|require("./css/header.css")|}];
 
 [@react.component]
 let make = () =>

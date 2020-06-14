@@ -28,13 +28,17 @@ let bootstrapProgram = {
   let wipeRedis =
     client
     |> getAllChannels
+    // deleting potential channels
     >>= (
       list =>
         list
         |> List.map((channel: Types.channelInfo) => channel.id)
         |> traverse(id => client |> Redis_IO.del(~key=id))
     )
-    |> IO.map(_ => "> redis wiped" |> Js.log);
+    // deleting hmap of registered channels
+    >>= (_ => client |> Redis_IO.del(~key="channels"))
+    |> IO.map(_ => "> redis wiped" |> Js.log)
+    |> IO.mapError(_ => ());
 
   // creates a global channel and logs out to the console
   let createGlobalChannel =
@@ -42,15 +46,19 @@ let bootstrapProgram = {
     |> createChannel(~channel)
     |> IO.map(_ => "> global channel created" |> Js.log);
 
-  wipeRedis >>= (_ => createGlobalChannel) >>= (_ => client |> Redis_IO.quit);
+  wipeRedis
+  >>= (_ => createGlobalChannel |> IO.mapError(_ => ()))
+  >>= (_ => client |> Redis_IO.quit |> IO.mapError(_ => ()));
 };
 
 let connectionProgram = (wsClient: Ws.Client.t, _: Fetch.Request.t): unit => {
-  let sendChannelsIo = (wsClient: Ws.Client.t, redisClient: Redis.Client.t) =>
+  let sendChannelsIo = (wsClient: Ws.Client.t, redisClient: Redis.Client.t) => {
+    "x" |> Js.log;
     redisClient
     |> getAllChannels
     >>= (
       channels => {
+        Js.log("we getting do channels");
         let data: string =
           Types.ChannelInfoListMessage(channels)
           |> Encoders.encodeMessage
@@ -58,25 +66,27 @@ let connectionProgram = (wsClient: Ws.Client.t, _: Fetch.Request.t): unit => {
         wsClient |> sendMessage(~data);
       }
     );
+  };
 
+  // ignore dis client for now
   let subscribef = (wsClient: Ws.Client.t, redisClient: Redis.Client.t) => {
-    let subscriber = redisClient |> Redis_IO.subscribe(~channel="global");
-    // | `subscribe((string, int) => unit)
+    // create subscribed client and a getting client...
+    let subscriber = Redis.createClient({port: 6379});
+    let genericClient = Redis.createClient({port: 6379});
+
     let onSubscribe = (_: string, _: int): unit =>
-      redisClient
+      genericClient
       |> sendChannelsIo(wsClient)
       |> IO.unsafeRunAsync(
            fun
            | Ok(_v) => "client successfully joined global channel" |> Js.log
-           | Error(_e) =>
-             "client failed to subscribe to global channel" |> Js.log,
+           | Error(e) => e |> Js.log,
          );
 
-    // | `unsubscribe((string, int) => unit)
     let onUnsubscribe = (_: string, _: int): unit => {
       "> client unsubscribed" |> Js.log;
     };
-    // | `message((string, string) => unit)
+
     let onMessage = (channel: string, message: string): unit => {
       // broadcast message to subscribed client
       wsClient
@@ -87,17 +97,16 @@ let connectionProgram = (wsClient: Ws.Client.t, _: Fetch.Request.t): unit => {
            | Error(_) => "message did not send" |> Js.log,
          );
     };
-    ();
-    subscriber
-    >>= (
-      _ =>
-        [
-          `message(onMessage),
-          `subscribe(onSubscribe),
-          `unsubscribe(onUnsubscribe),
-        ]
-        |> traverse(event => IO.suspend(() => Redis.Client.on(~event)))
-    );
+
+    [
+      `message(onMessage),
+      `subscribe(onSubscribe),
+      `unsubscribe(onUnsubscribe),
+    ]
+    |> traverse(event =>
+         IO.suspend(() => subscriber |> Redis.Client.on(~event))
+       )
+    >>= (_ => subscriber |> Redis_IO.subscribe(~channel="global"));
   };
 
   subscribef(wsClient, createClient({port: 6379}))
@@ -150,7 +159,7 @@ let alloc =
 
 let program0 =
   bootstrapProgram
-  >>= (_ => alloc)
+  >>= (_ => alloc |> IO.mapError(_ => ()))
   >>= (
     tuple => {
       let (server, client) = tuple;
@@ -171,15 +180,19 @@ let program0 =
 //      | Error(_) => "an error occurred" |> Js.log,
 //    );
 
-let resource = IO.suspendWithVoid(() => Ws.Server.make({port: 3000}));
+let resource =
+  IO.suspendWithVoid(() => Ws.Server.make({port: 3000}))
+  |> IO.mapError(_ => ());
 
 let program =
-  resource
+  bootstrapProgram
+  >>= (_ => resource)
   >>= (
     wsServer =>
       IO.suspendWithVoid(() =>
         wsServer |> Ws.Server.on(~event=`connection_(connectionProgram))
       )
+      |> IO.mapError(_ => ())
   );
 
 program

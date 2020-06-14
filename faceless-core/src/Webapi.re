@@ -16,5 +16,6 @@ module WebSocket = {
   // [@bs.set] external onerror
   // [@bs.set] external onclose
   [@bs.set]
-  external onmessage: (t, ~f: messageEvent => unit) => unit = "onmessage";
+  external onmessage: (t, ~messageHandler: messageEvent => unit) => unit =
+    "onmessage";
 };

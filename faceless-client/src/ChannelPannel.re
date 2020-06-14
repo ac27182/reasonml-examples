@@ -1,7 +1,7 @@
 open FacelessCore;
 open FacelessCore.Types;
 
-[%bs.raw {|require("./channelPannel.css")|}];
+[%bs.raw {|require("./css/channelPannel.css")|}];
 
 let fakeChannelInfo: Types.channelInfo = {
   id: Uuid.v4(),
@@ -12,9 +12,9 @@ let fakeChannelInfo: Types.channelInfo = {
 };
 
 [@react.component]
-let make = () =>
+let make = (~currentChannel: Types.channelInfo) =>
   <div className="channel-pannel-container">
-    <ChannelHeader channelInfo=fakeChannelInfo />
+    <ChannelHeader currentChannel />
     <MessageDisplay />
     <MessageInputBar />
   </div>;
