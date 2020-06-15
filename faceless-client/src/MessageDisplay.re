@@ -5,7 +5,7 @@ module MesageDisplayItem = {
   [@react.component]
   let make = (~textMessage: Types.textMessage) => {
     let {id, authorId, creationTimestamp, data} = textMessage;
-    <div className="message-display-item-container">
+    <div key={Uuid.v4()} className="message-display-item-container">
       <div> {"messageId: " ++ id |> React.string} </div>
       <div> {"authorId: " ++ authorId |> React.string} </div>
       <div> {"data: " ++ data |> React.string} </div>
@@ -26,12 +26,14 @@ let fakeMessage: Types.textMessage = {
 };
 
 [@react.component]
-let make = () =>
+let make = (~textMessages: option(list(textMessage))) =>
   <div className="message-display-container">
-    <MesageDisplayItem textMessage=fakeMessage />
-    <MesageDisplayItem textMessage=fakeMessage />
-    <MesageDisplayItem textMessage=fakeMessage />
-    <MesageDisplayItem textMessage=fakeMessage />
-    <MesageDisplayItem textMessage=fakeMessage />
-    <MesageDisplayItem textMessage=fakeMessage />
+    {switch (textMessages) {
+     | None => <div> {"no messages." |> React.string} </div>
+     | Some(m) =>
+       m
+       |> List.map(textMessage => <MesageDisplayItem textMessage />)
+       |> Array.of_list
+       |> React.array
+     }}
   </div>;

@@ -1,4 +1,5 @@
 open Relude_Globals;
+open Types;
 
 let toAsyncIo = (partialFunction: Redis.callback('a) => 'u): IO.t('a, 'e) => {
   IO.async(onDone =>
@@ -39,3 +40,14 @@ let string_of_option = (opt: option(string)): string =>
 // let genMessage = () => ();
 
 let logIo = (message: string) => IO.suspendWithVoid(() => message |> Js.log);
+
+let pathParser = (path: string): channelMultiplexer =>
+  switch (path |> String.splitList(~delimiter="/")) {
+  | [_, id, ..._] =>
+    switch (id) {
+    | "global" => GlobalChannel
+    | "" => GlobalChannel
+    | _ => MessageChannel(id)
+    }
+  | _ => GlobalChannel
+  };

@@ -1,16 +1,18 @@
 open FacelessCore;
 open FacelessCore.Types;
+open ContextProvider;
 
 module ChannelInfoItem = {
   [@react.component]
   let make = (~channelInfo: Types.channelInfo) => {
     let {id, displayName, hidden, creationTimestamp} = channelInfo;
 
-    let appDispatch = React.useContext(ContextProvider.appContext);
+    let {dispatch} = React.useContext(ContextProvider.appContext);
 
     <div
+      key={Uuid.v4()}
       className="channel-info-item-container"
-      onClick={_ => appDispatch |> ClientLogic.enterChannel(channelInfo)}>
+      onClick={_ => dispatch |> ClientLogic.enterChannel(channelInfo)}>
       <div> {"image" |> React.string} </div>
       <div className="f">
         <div> {displayName |> React.string} </div>
@@ -30,14 +32,6 @@ module ChannelInfoItem = {
     </div>;
   };
 };
-
-// let fakeChannelInfo: Types.channelInfo = {
-//   id: Uuid.v4(),
-//   displayName: "channel-" ++ Uuid.v4(),
-//   hidden: false,
-//   password: None,
-//   creationTimestamp: Js.Date.now(),
-// };
 
 [@react.component]
 let make = (~channels: list(Types.channelInfo)) =>

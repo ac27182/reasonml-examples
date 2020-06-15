@@ -35,14 +35,21 @@ let decodeMessage = (json: Js.Json.t): Types.message =>
     CreateChannelRequestMessage(
       json |> field("payload", decodeCreateChannelRequest),
     )
+
   | "channelInfo" =>
     ChannelInfoMessage(json |> field("payload", decodeChannelInfo))
+
   | "channelInfoList" =>
     ChannelInfoListMessage(
       json |> field("payload", list(decodeChannelInfo)),
     )
-  | "textMessage" => TextMessageMessage(json |> decodeTextMessage)
+
+  | "textMessage" =>
+    TextMessageMessage(json |> field("payload", decodeTextMessage))
+
   | "textMesageList" =>
-    TextMessageListMessage(json |> list(decodeTextMessage))
+    TextMessageListMessage(
+      json |> field("payload", field("payload", list(decodeTextMessage))),
+    )
   | p => raise(InvalidPayloadType(p))
   };

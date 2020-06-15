@@ -1,14 +1,26 @@
 .navigation-pannel-container {
   display: grid;
-  grid-template-rows: 25px 25px 25px 1fr;
+  grid-template-rows: 40px 40px minmax(max-content, max-content) 1fr;
   grid-template-columns: 1fr;
   overflow-y: hidden;
-  border-right: 1px solid #eeeeee;
 }
 
 .channel-search-bar-container {
   display: grid;
   grid-template-rows: 1fr;
+  grid-template-columns: 1fr 40px;
+}
+
+.create-channel-contianer-collapsed {
+  max-height: 40px;
+  display: grid;
+  grid-template-rows: 1fr;
+  grid-template-columns: 1fr;
+}
+
+.create-channel-container-open {
+  display: grid;
+  grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
   grid-template-columns: 1fr;
 }
 

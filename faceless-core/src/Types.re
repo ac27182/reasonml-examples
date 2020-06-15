@@ -30,3 +30,7 @@ type message =
   | ChannelInfoListMessage(list(channelInfo))
   | TextMessageMessage(textMessage)
   | TextMessageListMessage(list(textMessage));
+
+type channelMultiplexer =
+  | GlobalChannel
+  | MessageChannel(string);
