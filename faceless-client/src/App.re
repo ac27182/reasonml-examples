@@ -10,10 +10,6 @@ open ClientLogic;
 type action = ClientLogic.appAction;
 
 type state = {
-  // un used
-  subscribedChannels: list(channelInfo),
-  connections: int,
-  // in use
   channels: list(channelInfo),
   textMessages: option(list(textMessage)),
   currentChannel: option(channelInfo),
@@ -25,8 +21,6 @@ type state = {
 // state to initialise the application
 let initialState = {
   channels: List.empty,
-  subscribedChannels: List.empty,
-  connections: Int.zero,
   navigationPannelHidden: false,
   currentChannel: None,
   textMessages: None,
@@ -71,18 +65,16 @@ let messageToAction = (message: Types.message): action =>
   | TextMessageListMessage(m) => PopulateTextMessages(Some(m))
   | TextMessageMessage(m) => AppendTextMessage(m)
   | ChannelInfoMessage(m) => AppendChannelInfo(m)
-  | _ => DoNothing
   };
 
 [@react.component]
 let make = (~userId: string) => {
   let (state, dispatch: action => unit) =
     React.useReducer(reducer, initialState);
+
   let url = "ws://localhost:3000/global";
 
   let {
-    connections,
-    subscribedChannels,
     currentChannel,
     channels,
     navigationPannelHidden,
@@ -106,16 +98,12 @@ let make = (~userId: string) => {
   };
 
   // message handler function
-  let messageHandler = (messageEvent: WebSocket.messageEvent): unit => {
-    "> incoming message" |> Js.log;
-    messageEvent |> Js.log;
-
+  let messageHandler = (messageEvent: WebSocket.messageEvent): unit =>
     messageEvent.data
     |> Js.Json.parseExn
     |> Decoders.decodeMessage
     |> messageToAction
     |> dispatch;
-  };
 
   // adding an event listener to our websocket
   switch (wsGlobalClient) {
@@ -128,11 +116,7 @@ let make = (~userId: string) => {
   | Some(w) => w |> WebSocket.onmessage(~messageHandler)
   };
 
-  state |> Js.log;
-
   <div className="app-container">
-    <div onClick={_ => ToggleNavigationPannel |> dispatch} />
-    <Header />
     <ContextProvider value>
       <NavigationPannel navigationPannelHidden channels />
     </ContextProvider>

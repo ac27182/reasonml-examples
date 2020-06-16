@@ -65,7 +65,7 @@ module ChannelSearchBar = {
           value=filterInput
           onChange=filterChannels
         />
-        <button onClick=clearFilter> {"clear" |> React.string} </button>
+        <button onClick=clearFilter> {"x" |> React.string} </button>
       </div>;
 };
 

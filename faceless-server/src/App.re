@@ -3,7 +3,6 @@ open Redis;
 open Relude_Globals;
 open Relude_IO;
 open Relude_List.IO;
-open Logic;
 open FacelessCore.Types;
 
 // complete garbage, but it all works. we'll comb through and do a monstor refactor later on

@@ -1,6 +1,6 @@
 .navigation-pannel-container {
   display: grid;
-  grid-template-rows: 40px 40px minmax(max-content, max-content) 1fr;
+  grid-template-rows: 50px 50px minmax(max-content, max-content) 1fr;
   grid-template-columns: 1fr;
   overflow-y: hidden;
 }
@@ -8,11 +8,12 @@
 .channel-search-bar-container {
   display: grid;
   grid-template-rows: 1fr;
-  grid-template-columns: 1fr 40px;
+  grid-template-columns: 1fr 100px;
 }
 
 .create-channel-contianer-collapsed {
-  max-height: 40px;
+  max-height: 50px;
+  height: 50px;
   display: grid;
   grid-template-rows: 1fr;
   grid-template-columns: 1fr;

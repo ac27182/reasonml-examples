@@ -25,6 +25,15 @@ let fakeMessage: Types.textMessage = {
   data: "> message body",
 };
 
+let timestampSort = (f0: float, f1: float): int =>
+  if (f0 < f1) {
+    (-1);
+  } else if (f0 > f1) {
+    1;
+  } else {
+    0;
+  };
+
 [@react.component]
 let make = (~textMessages: option(list(textMessage))) =>
   <div className="message-display-container">
