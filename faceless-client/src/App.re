@@ -62,7 +62,6 @@ let reducer = (state: state, action: action) =>
       ...state,
       channels: state.channels |> List.append(channelInfo),
     }
-
   | _ => state
   };
 
@@ -108,6 +107,9 @@ let make = (~userId: string) => {
 
   // message handler function
   let messageHandler = (messageEvent: WebSocket.messageEvent): unit => {
+    "> incoming message" |> Js.log;
+    messageEvent |> Js.log;
+
     messageEvent.data
     |> Js.Json.parseExn
     |> Decoders.decodeMessage

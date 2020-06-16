@@ -32,6 +32,10 @@ let leaveChannel = (dispatch: appAction => unit): unit =>
 // navigationPannelActions
 
 type navigationPannelAction =
+  | HandleNewChannelDisplayNameInput(string)
+  | HandleNewChannelPasswordInput(string)
+  | HandleNewChannelHiddenToggle
+  | HandleCreateNewChannel
   | ToggleCollapse
   | FilterChannels(string)
   | ClearFilter;

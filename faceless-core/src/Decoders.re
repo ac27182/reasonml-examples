@@ -27,15 +27,9 @@ let decodeCreateChannelRequest = (json: Js.Json.t): Types.createChannelRequest =
   password: json |> field("password", string) |> option_of_string,
 };
 
-let decodeMessage = (json: Js.Json.t): Types.message =>
-  // naughty, don't raise exceptions. learn a nice way to handle exceptions in the decoder
-  // maybe turn this into a bifunctor
+let decodeMessage = (json: Js.Json.t): Types.message => {
+  json |> Js.log;
   switch (json |> field("payloadType", string)) {
-  | "createChannelRequest" =>
-    CreateChannelRequestMessage(
-      json |> field("payload", decodeCreateChannelRequest),
-    )
-
   | "channelInfo" =>
     ChannelInfoMessage(json |> field("payload", decodeChannelInfo))
 
@@ -49,7 +43,8 @@ let decodeMessage = (json: Js.Json.t): Types.message =>
 
   | "textMesageList" =>
     TextMessageListMessage(
-      json |> field("payload", field("payload", list(decodeTextMessage))),
+      json |> field("payload", list(decodeTextMessage)),
     )
   | p => raise(InvalidPayloadType(p))
   };
+};

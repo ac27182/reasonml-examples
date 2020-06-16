@@ -42,7 +42,6 @@ let encodeCreateChannelRequest =
 // helper function for encodeMessage
 let derivePayloadType = (message: Types.message) =>
   switch (message) {
-  | CreateChannelRequestMessage(_) => "createChannelRequest" |> string
   | ChannelInfoMessage(_) => "channelInfo" |> string
   | ChannelInfoListMessage(_) => "channelInfoList" |> string
   | TextMessageMessage(_) => "textMessage" |> string
@@ -52,7 +51,6 @@ let derivePayloadType = (message: Types.message) =>
 // helper function for encodeMessage
 let derivePayload = (message: Types.message): Js.Json.t =>
   switch (message) {
-  | CreateChannelRequestMessage(m) => m |> encodeCreateChannelRequest
   | ChannelInfoMessage(m) => m |> encodeChannelInfo
   | ChannelInfoListMessage(m) => m |> list(encodeChannelInfo)
   | TextMessageMessage(m) => m |> encodeTextMessage
