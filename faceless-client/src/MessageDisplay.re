@@ -6,32 +6,21 @@ module MesageDisplayItem = {
   let make = (~textMessage: Types.textMessage) => {
     let {id, authorId, creationTimestamp, data} = textMessage;
     <div key={Uuid.v4()} className="message-display-item-container">
-      <div> {"messageId: " ++ id |> React.string} </div>
-      <div> {"authorId: " ++ authorId |> React.string} </div>
-      <div> {"data: " ++ data |> React.string} </div>
+      <div> {"id_ - " ++ id |> React.string} </div>
+      <div> {"ida - " ++ authorId |> React.string} </div>
       <div>
-        {"date: "
-         ++ (creationTimestamp |> Js.Date.fromFloat |> Js.Date.toDateString)
-         |> React.string}
+        {"ct_ - " ++ (creationTimestamp |> Js.Float.toString) |> React.string}
       </div>
+      <div> {"msg - " ++ data |> React.string} </div>
     </div>;
   };
 };
 
-let fakeMessage: Types.textMessage = {
-  id: Uuid.v4(),
-  authorId: Uuid.v4(),
-  creationTimestamp: Js.Date.now(),
-  data: "> message body",
-};
-
-let timestampSort = (f0: float, f1: float): int =>
-  if (f0 < f1) {
-    (-1);
-  } else if (f0 > f1) {
-    1;
-  } else {
-    0;
+let sortf = (i0: float, i1: float): int =>
+  switch (i0 < i1, i0 == i1) {
+  | (_, true) => 0
+  | (true, _) => 1
+  | (_, _) => (-1)
   };
 
 [@react.component]
@@ -41,6 +30,9 @@ let make = (~textMessages: option(list(textMessage))) =>
      | None => <div> {"no messages." |> React.string} </div>
      | Some(m) =>
        m
+       |> List.sort((m0:textMessage, m1:textMessage) =>
+            sortf(m0.creationTimestamp, m1.creationTimestamp)
+          )
        |> List.map(textMessage => <MesageDisplayItem textMessage />)
        |> Array.of_list
        |> React.array

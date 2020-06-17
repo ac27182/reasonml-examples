@@ -2,6 +2,9 @@ open Types;
 open Json_encode;
 open Utils;
 
+let encodeTimestampAsString = (ts: float): Js.Json.t =>
+  ts |> Js.Float.toString |> string;
+
 let encodeChannelInfo = (channelInfo: Types.channelInfo): Js.Json.t => {
   let {displayName, id, password, hidden, creationTimestamp} = channelInfo;
 
@@ -10,7 +13,7 @@ let encodeChannelInfo = (channelInfo: Types.channelInfo): Js.Json.t => {
     ("id", id |> string),
     ("hidden", hidden |> bool),
     ("password", password |> string_of_option |> string),
-    ("creationTimestamp", creationTimestamp |> int_of_float |> int),
+    ("creationTimestamp", creationTimestamp |> encodeTimestampAsString),
   ]
   |> object_;
 };
@@ -22,7 +25,7 @@ let encodeTextMessage = (textMessage: Types.textMessage): Js.Json.t => {
     ("id", id |> string),
     ("authorId", authorId |> string),
     ("data", data |> string),
-    ("creationTimestamp", creationTimestamp |> int_of_float |> int),
+    ("creationTimestamp", creationTimestamp |> encodeTimestampAsString),
   ]
   |> object_;
 };

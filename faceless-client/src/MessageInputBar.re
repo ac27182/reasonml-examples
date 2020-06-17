@@ -20,11 +20,11 @@ let reducer = (_, action: messageInputBarAction) =>
 let make = () => {
   let (state, dispatch) = React.useReducer(reducer, initialState);
 
-  let {wsChannelClient} = React.useContext(appContext);
+  let {wsChannelClient, authorId} = React.useContext(appContext);
 
   let textMessage: textMessage = {
     id: Uuid.v4(),
-    authorId: Uuid.v4(),
+    authorId,
     data: state.messageInput,
     creationTimestamp: Js.Date.now(),
   };

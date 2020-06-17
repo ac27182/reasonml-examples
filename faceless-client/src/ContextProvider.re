@@ -1,12 +1,13 @@
 open ClientLogic;
 open FacelessCore.Webapi;
 open FacelessCore.Types;
-
+open Relude_Globals;
 type appContext = {
   dispatch: appAction => unit,
   wsGlobalClient: option(WebSocket.t),
   wsChannelClient: option(WebSocket.t),
   textMessages: option(list(textMessage)),
+  authorId: string,
 };
 
 let defaultAppConext: appContext = {
@@ -14,6 +15,7 @@ let defaultAppConext: appContext = {
   wsGlobalClient: None,
   wsChannelClient: None,
   textMessages: None,
+  authorId: String.empty,
 };
 
 // let defaultValue = (_: appAction): unit => "doing nothing..." |> Js.log; // do nothing

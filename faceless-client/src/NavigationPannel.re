@@ -58,15 +58,21 @@ module ChannelSearchBar = {
         ~filterChannels: ReactEvent.Form.t => unit,
       ) =>
     <div className="channel-search-bar-container">
-      // filter bar
+      <input
+        placeholder="search for channel"
+        value=filterInput
+        onChange=filterChannels
+      />
+      <button onClick=clearFilter> {"_" |> React.string} </button>
+    </div>;
+};
 
-        <input
-          placeholder="search for channel"
-          value=filterInput
-          onChange=filterChannels
-        />
-        <button onClick=clearFilter> {"x" |> React.string} </button>
-      </div>;
+module NavigationPannelHeader = {
+  [@react.component]
+  let make = () =>
+    <div className="navigation-pannel-header-container">
+      {"faceless" |> React.string}
+    </div>;
 };
 
 module CreateChannelBar = {
@@ -84,27 +90,33 @@ module CreateChannelBar = {
         ~newChannelHiddenToggle: bool,
       ) =>
     createChannelCollapsed
-      ? <div className="create-channel-contianer-collapsed">
+      ? <div className="create-channel-container-collapsed">
           <button onClick=toggleCollapse>
             {"create new channel" |> React.string}
           </button>
         </div>
       : <div className="create-channel-container-open">
           <input
+            placeholder="channel display name"
             onChange=handleNewChannelDisplayNameInput
             value=newChannelDisplayNameInput
           />
           <input
+            placeholder="channel password"
             onChange=handleNewChannelPasswordInput
             value=newChannelPasswordInput
           />
           <button onClick=handleNewChannelHiddenToggle>
             {"hidden" |> React.string}
           </button>
-          <button onClick=toggleCollapse> {"cancel" |> React.string} </button>
-          <button onClick=handleCreateNewChannel>
-            {"create" |> React.string}
-          </button>
+          <div className="containerx">
+            <button onClick=toggleCollapse>
+              {"cancel" |> React.string}
+            </button>
+            <button onClick=handleCreateNewChannel>
+              {"create" |> React.string}
+            </button>
+          </div>
         </div>;
 };
 
@@ -177,7 +189,7 @@ let make =
 
   // main component
   <div className="navigation-pannel-container">
-    <div> {" channels" |> React.string} </div> // header
+    <NavigationPannelHeader />
     <ChannelSearchBar clearFilter filterChannels filterInput />
     <CreateChannelBar
       toggleCollapse

@@ -95,6 +95,7 @@ let make = (~userId: string) => {
     wsGlobalClient,
     wsChannelClient,
     textMessages,
+    authorId: userId,
   };
 
   // message handler function

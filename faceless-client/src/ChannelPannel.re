@@ -35,7 +35,6 @@ let make = (~currentChannel: Types.channelInfo) => {
   state |> Js.log;
   <div className="channel-pannel-container">
     <ChannelHeader currentChannel />
-    // <button onClick={_ => Toggle |> dispatch} />
     <MessageDisplay textMessages={appContext.textMessages} />
     <MessageInputBar />
   </div>;
