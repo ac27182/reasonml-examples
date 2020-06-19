@@ -10,6 +10,8 @@ open FacelessCore.Types;
 // naughty and impure, but pragmatic and harmless
 // helper function to wrap around bs-uuid
 
+let redisConfig = {port: 6379, host: "redis"};
+
 let defaultHandler = (io: IO.t('a, 'e)): unit =>
   io
   |> IO.unsafeRunAsync(
@@ -208,8 +210,8 @@ let connectionProgram = (wsClient: Ws.Client.t, f: Fetch.Request.t): unit => {
 
   subscribeToGlobal(
     wsClient,
-    createClient({port: 6379}),
-    createClient({port: 6379}),
+    createClient(redisConfig),
+    createClient(redisConfig),
   )
   |> defaultHandler;
 };
@@ -217,7 +219,7 @@ let connectionProgram = (wsClient: Ws.Client.t, f: Fetch.Request.t): unit => {
 // message handler
 let websocketMessageHandler = (channelId: string, message: string): unit => {
   let decodedMessage = message |> Js.Json.parseExn |> Decoders.decodeMessage;
-  let redisClient = createClient({port: 6379});
+  let redisClient = createClient(redisConfig);
 
   switch (decodedMessage) {
   | ChannelInfoMessage(m0) =>
@@ -292,8 +294,8 @@ let connectToWebSocket = (wsClient: Ws.Client.t, req: Fetch.Request.t) => {
       wsClient =>
         subscribeToGlobal(
           wsClient,
-          Redis.createClient({port: 6379}),
-          Redis.createClient({port: 6379}),
+          Redis.createClient(redisConfig),
+          Redis.createClient(redisConfig),
         )
     )
     |> defaultHandler;
@@ -305,8 +307,8 @@ let connectToWebSocket = (wsClient: Ws.Client.t, req: Fetch.Request.t) => {
       wsClient =>
         subscribeToChannel(
           wsClient,
-          Redis.createClient({port: 6379}),
-          Redis.createClient({port: 6379}),
+          Redis.createClient(redisConfig),
+          Redis.createClient(redisConfig),
           channelId,
         )
     )
@@ -324,7 +326,7 @@ let wsServerConnectionHandler = connectToWebSocket;
 
 // program to run at the end of the world
 let program =
-  createClient({port: 6379})
+  createClient(redisConfig)
   |> bootstrapProgram
   >>= (_ => makeWsServer)
   >>= (

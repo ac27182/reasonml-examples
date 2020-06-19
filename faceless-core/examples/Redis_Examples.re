@@ -1,6 +1,6 @@
 open Redis;
 
-let client = createClient({port: 6379});
+let client = createClient({port: 6379, host: "redis"});
 
 let key = "channel0";
 

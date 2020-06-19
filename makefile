@@ -9,10 +9,34 @@ redis:
 theme-list:
 	@bsb -themes > themes.txt
 
-remove:
+remove-all-images:
 	@docker rm -f `docker ps -aq`
 
-redis-restart: remove redis
+redis-restart: remove-all-images redis
+
+build-core:
+	@docker build \
+		--no-cache \
+		-f dockerfiles/core.dockerfile \
+		-t faceless-core \
+		faceless-core/
+
+build-server:
+	@docker build \
+		--no-cache \
+		-f dockerfiles/server.dockerfile \
+		-t faceless-server \
+		faceless-server/
+
+build-client:
+	@docker build \
+		--no-cache \
+		-f dockerfiles/client.dockerfile \
+		-t faceless-client \
+		faceless-client/
+
+build-all: build-core build-server build-client
+
 
 # commands to add
 

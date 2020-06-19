@@ -4,7 +4,10 @@ type error =
 
 type callback('a) = (Js.Null.t(error), 'a) => unit;
 
-type clientOptions = {port: int};
+type clientOptions = {
+  port: int,
+  host: string,
+};
 
 module Client = {
   type t;

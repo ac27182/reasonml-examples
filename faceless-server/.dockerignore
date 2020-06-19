@@ -1,0 +1,10 @@
+
+lib/
+node_modules/
+_esy/
+esy.lock/
+
+src/*.bs.js
+
+.gitignore
+.merlin

@@ -1,0 +1,9 @@
+examples/
+lib/
+node_modules/
+build/
+
+src/*.bs.js
+
+.gitignore
+.merlin

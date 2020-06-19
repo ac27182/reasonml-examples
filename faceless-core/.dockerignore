@@ -1,0 +1,9 @@
+# __tests__
+# examples
+lib/
+node_modules/
+
+src/*.bs.js
+
+.gitignore
+.merlin
