@@ -17,6 +17,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "@glennsl/bs-json": "^5.0.2",
     "bs-bastet": "^1.2.5",
     "bs-fetch": "^0.5.2",
     "faceless-core": "file:../faceless-core",

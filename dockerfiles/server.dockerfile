@@ -1,9 +1,13 @@
-FROM      faceless-core:latest
-WORKDIR   /app/faceless-server
+FROM faceless-core:latest as stage-1
+WORKDIR /app/faceless-server
+CMD ["node", "src/App.bs.js"]
 
-COPY      ./*json ./
-COPY      . .
-RUN       npm install \
-  && npm run build
+COPY *json ./
+COPY yarn.lock .
 
-CMD       node src/App.bs.js
+RUN yarn install --pure-lockfile
+RUN yarn --cwd ../faceless-core install --pure-lockfile
+
+COPY . .
+RUN yarn run build
+RUN yarn --cwd ../faceless-core run build
