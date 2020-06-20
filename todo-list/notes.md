@@ -10,7 +10,7 @@
 
 - took a bit of getting used to some of the compiler quirks (always keep an eye out for semicolons)
 
-- love the reverse application operator to combine function calls
+- love the pipe operator to combine function calls
 
 ## future improvements
 

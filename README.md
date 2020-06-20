@@ -4,7 +4,7 @@ faceless is a simple, multitenant anonymous chat room application
 
 ## what this app is
 
-- a fun project to get to grips with reasonML and it's fp ecosystem
+- a fun project to get to grips with reasonML and it's ecosystem
 
 ## what this app is not
 

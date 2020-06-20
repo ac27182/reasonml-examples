@@ -40,7 +40,3 @@ remove-all-images:
 
 redis-restart: remove-all-images redis
 
-cleanup:
-	rm -rf **node_modules **lib && \
-	rm **.bs.js **.merlin
-
