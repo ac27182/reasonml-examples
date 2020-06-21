@@ -26,8 +26,8 @@ $ make build-all
 # 2. run built app locally
 $ make up
 
-# 3. open http://localhost:3001 in your browser of choud
-# ! see make file for underlying build commands
+# 3. open http://localhost:3001 in your browser of choice
+# ! see makefile for underlying build commands
 ```
 
 # cleanup instructions

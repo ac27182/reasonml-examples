@@ -74,6 +74,8 @@ let make = (~userId: string) => {
 
   let url = "ws://localhost:3000/global";
 
+  Webapi.WebSocket.wsbc(url);
+
   let {
     currentChannel,
     channels,

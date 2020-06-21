@@ -1,7 +1,8 @@
 open Relude_Globals;
 open Redis;
 open Utils;
-
+// open Relude_List.IO;
+open Relude.IO;
 // hashmap ops
 let hset =
     (client: Client.t, ~key: string, ~field: string, ~value: string)
@@ -45,7 +46,7 @@ let lpush = (client: Client.t, ~key: string, ~item: string): IO.t(int, error) =>
 let lpop = (client: Client.t, ~key: string): IO.t(string, error) =>
   client |> Redis.lpop(~key) |> toAsyncIo;
 
-// pubsub ops
+// pubsub opsopen Relude_List.IO;
 let subscribe = (client: Client.t, ~channel: string): IO.t('a, 'e) =>
   client |> Redis.subscribe(~channel) |> toAsyncIo;
 
@@ -63,3 +64,28 @@ let quit = (client: Client.t): IO.t('a, 'e) =>
 // basic redis
 let del = (client: Client.t, ~key: string): IO.t('a, 'e) =>
   client |> Redis.del(~key) |> toAsyncIo;
+
+let createClient1 =
+    (clientOptions: Redis.clientOptions): IO.t(Redis.Client.t, 'e) =>
+  IO.suspend(() => clientOptions |> Redis.createClient);
+
+// let createClient2 =
+//     (clientOptions0: clientOptions, clientOptions1: clientOptions) =>
+//   [clientOptions0, clientOptions1]
+//   |> traverse(c => c |> createClient1)
+//   |> IO.map(l =>
+//        switch (l) {
+//        | [client0, client1] => (client0, client1)
+//        | _ => raise(exception_)
+//        }
+//      );
+
+let createClient2 =
+    (clientOptions0: clientOptions, clientOptions1: clientOptions)
+    : IO.t((Redis.Client.t, Redis.Client.t), 'e) =>
+  createClient1(clientOptions0)
+  >>= (
+    client0 =>
+      createClient1(clientOptions1)
+      >>= (client1 => IO.suspend(() => (client0, client1)))
+  );
