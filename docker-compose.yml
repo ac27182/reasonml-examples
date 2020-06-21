@@ -5,6 +5,8 @@ services:
     image: faceless-client
     ports:
       - "3001:3001"
+    environment:
+      - WEBSOCKET_PORT=3000
     depends_on:
       - server
       - redis
@@ -13,6 +15,10 @@ services:
     image: faceless-server
     ports:
       - "3000:3000"
+    environment:
+      - WEBSOCKET_PORT=3000
+      - REDIS_PORT=6379
+      - REDIS_HOST=redis
     depends_on:
       - redis
 

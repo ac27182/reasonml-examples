@@ -1,6 +1,7 @@
 open Redis;
+open Relude_Globals;
 
-let client = createClient({port: 6379, host: "redis"});
+let client = createClient({port: 6379 |> Option.some, host: Option.empty});
 
 let key = "channel0";
 
@@ -14,8 +15,6 @@ let callback = (_, data) => data |> Js.log;
 
 // remove item from list
 // client->lpop(~key, callback);
-
-open Relude_Globals;
 
 // get key
 

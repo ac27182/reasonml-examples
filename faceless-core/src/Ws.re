@@ -22,7 +22,7 @@ module Server = {
   type t;
 
   // (very) incomplete list of server options
-  type serverOptions = {port: int};
+  type serverOptions = {port: option(int)};
 
   [@bs.new] [@bs.module "ws"] external make: serverOptions => t = "Server";
 

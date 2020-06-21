@@ -10,7 +10,7 @@
     "start": "bsb -make-world -w",
     "clean": "bsb -clean-world",
     "test": "jest -w ./__tests__",
-    "test-app": "node src/App.bs.js"
+    "test-app": "REDIS_PORT=6379 REDIS_HOST=localhost node src/App.bs.js"
   },
   "author": "",
   "license": "ISC",

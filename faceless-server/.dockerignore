@@ -1,8 +1,8 @@
-
 lib/
 node_modules/
 _esy/
 esy.lock/
+package-lock.json
 
 src/*.bs.js
 

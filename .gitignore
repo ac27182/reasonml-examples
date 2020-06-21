@@ -10,7 +10,5 @@
 **.cmt
 **DS_Store
 **npm-debug.log
-.merlin
-
-# user generated
-themes.txt
+**.merlin
+**package-lock.json

@@ -2,6 +2,7 @@
 # examples
 lib/
 node_modules/
+package-lock.json
 
 src/*.bs.js
 

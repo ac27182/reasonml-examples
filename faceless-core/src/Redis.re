@@ -5,8 +5,8 @@ type error =
 type callback('a) = (Js.Null.t(error), 'a) => unit;
 
 type clientOptions = {
-  port: int,
-  host: string,
+  port: option(int),
+  host: option(string),
 };
 
 module Client = {
