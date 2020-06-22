@@ -4,7 +4,7 @@
   display: grid;
   grid-template-rows: 1fr;
   grid-template-columns: minmax(200px, 450px) minmax(450px, 1fr);
-  background-color: rgb(250, 250, 250);
+  background-color: white;
   font-family: "Courier New", Courier, monospace;
 }
 
@@ -48,6 +48,7 @@ button:hover {
   overflow-x: hidden;
   overflow-y: hidden;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
 }
@@ -59,17 +60,34 @@ button:hover {
   width: 200px;
   height: 200px;
   border-radius: 50%;
+  position: relative;
+  transition: all 2s ease-in-out;
+  background-color: #333;
+}
+
+.centered-item:hover {
+  height: 800px;
+  width: 800px;
 }
 
 /* we could do this programatically using inline styles with reason... */
 .elipse {
   box-shadow: 3px 3px 6px 0 rgba(0, 0, 0, 0.1);
-  width: 100px;
-  height: 200px;
-  border: 0.5px #333 solid;
+  width: 50%;
+  height: 100%;
+  border: 2px white solid;
   border-radius: 50%;
   position: absolute;
 }
+
+.name-prompt {
+  font-size: 20px;
+}
+.name-input {
+  z-index: 999;
+  height: 40px;
+}
+
 .rotation1 {
   animation: rotation 16s infinite linear;
 }

@@ -16,6 +16,8 @@ type state = {
   navigationPannelHidden: bool,
   wsGlobalClient: option(WebSocket.t),
   wsChannelClient: option(WebSocket.t),
+  name: string,
+  nameInput: string,
 };
 
 // state to initialise the application
@@ -26,6 +28,8 @@ let initialState = {
   textMessages: None,
   wsGlobalClient: None,
   wsChannelClient: None,
+  name: "",
+  nameInput: "",
 };
 
 // component reducer
@@ -56,7 +60,6 @@ let reducer = (state: state, action: action) =>
       ...state,
       channels: state.channels |> List.append(channelInfo),
     }
-  | _ => state
   };
 
 let messageToAction = (message: Types.message): action =>
@@ -74,8 +77,6 @@ let make = (~userId: string) => {
 
   let url = "ws://localhost:3000/global";
 
-  Webapi.WebSocket.wsbc(url);
-
   let {
     currentChannel,
     channels,
@@ -83,22 +84,8 @@ let make = (~userId: string) => {
     wsGlobalClient,
     wsChannelClient,
     textMessages,
+    name,
   } = state;
-
-  // adding websocket client
-  React.useEffect0(() => {
-    AddWsGlobalClient(Some(Webapi.WebSocket.wsbc(url))) |> dispatch;
-    Some(() => ());
-  });
-
-  // setting state for context
-  let value: ContextProvider.appContext = {
-    dispatch,
-    wsGlobalClient,
-    wsChannelClient,
-    textMessages,
-    authorId: userId,
-  };
 
   // message handler function
   let messageHandler = (messageEvent: WebSocket.messageEvent): unit =>
@@ -108,10 +95,41 @@ let make = (~userId: string) => {
     |> messageToAction
     |> dispatch;
 
-  // adding an event listener to our websocket
-  switch (wsGlobalClient) {
-  | None => "no websocket passed in..." |> Js.log
-  | Some(w) => w |> WebSocket.onmessage(~messageHandler)
+  React.useEffect0(() => {
+    AddWsGlobalClient(Some(Webapi.WebSocket.wsbc(url))) |> dispatch;
+    Some(() => ());
+  });
+
+  React.useEffect1(
+    () => {
+      switch (wsGlobalClient) {
+      | None => "no websocket passed in..." |> Js.log
+      | Some(w) => w |> WebSocket.onmessage(~messageHandler)
+      };
+      // need to close down the websocket connection
+      Some(() => ());
+    },
+    [wsGlobalClient] |> Array.fromList,
+  );
+
+  React.useEffect1(
+    () => {
+      switch (wsChannelClient) {
+      | None => "no websocket passed in..." |> Js.log
+      | Some(w) => w |> WebSocket.onmessage(~messageHandler)
+      };
+      Some(() => ());
+    },
+    [wsChannelClient] |> Array.fromList,
+  );
+
+  // setting state for context
+  let value: ContextProvider.appContext = {
+    dispatch,
+    wsGlobalClient,
+    wsChannelClient,
+    textMessages,
+    authorId: userId,
   };
 
   switch (wsChannelClient) {
@@ -124,7 +142,7 @@ let make = (~userId: string) => {
       <NavigationPannel navigationPannelHidden channels />
     </ContextProvider>
     {switch (currentChannel) {
-     | None => <Spinner />
+     | None => <Spinner name />
      | Some(currentChannel) =>
        <ContextProvider value>
          <ChannelPannel currentChannel />
