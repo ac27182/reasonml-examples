@@ -51,3 +51,28 @@ let pathParser = (path: string): channelMultiplexer =>
     }
   | _ => GlobalChannel
   };
+
+// NB
+// int of string can still thow an exception if it can't be converted correctly
+// need to make int of string return an option(int) for referential transparency
+let parseProcess = (process: Node_process.t): environment => {
+  let dict: Js_dict.t(string) = process##env;
+
+  let redisPort: option(int) =
+    dict->Js.Dict.get("REDIS_PORT") |> Option.map(s => s |> int_of_string);
+
+  let webSocketPort: option(int) =
+    dict->Js.Dict.get("WEBSOCKET_PORT") |> Option.map(s => s |> int_of_string);
+
+  let redisHost: option(string) = dict->Js.Dict.get("REDIS_HOST");
+
+  {redisPort, redisHost, webSocketPort};
+};
+
+let defaultHandler = (io: IO.t('a, 'e)): unit =>
+  io
+  |> IO.unsafeRunAsync(
+       fun
+       | Ok(_) => "success" |> Js.log
+       | Error(_) => "an error occurred" |> Js.log,
+     );

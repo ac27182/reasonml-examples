@@ -1,12 +1,12 @@
 open FacelessCore;
 open FacelessCore.Ws;
-open FacelessCore.Ws_IO;
 open Redis;
 open Relude_Globals;
 open Relude_IO;
-open Relude_List.IO;
 
 open Logic;
+open Types;
+open Utils;
 
 let environment: environment = Node_process.process |> parseProcess;
 
@@ -21,21 +21,20 @@ let webSocketConfig: Ws.Server.serverOptions = {
 
 // program to run at the end of the world
 let program =
-  createClient(redisConfig)
-  |> bootstrapProgram
+    (
+      redisConfig: Redis.clientOptions,
+      webSocketConfig: Ws.Server.serverOptions,
+    ) =>
+  redisConfig
+  |> Redis_IO.createClient1
+  >>= (client => client |> bootstrapProgram)
   >>= (_ => Ws_IO.makeWsServer(webSocketConfig))
-  // make redis client: subscriber
-  // make redis client: general
   >>= (
     wsServer => {
-      let connectionEvent =
-        wsServerConnectionHandler(redisConfig)->`connection_;
+      let event = wsServerConnectionHandler(redisConfig)->`connection_;
 
       IO.suspend(() => wsServer)
-      >>= (
-        server =>
-          IO.suspend(() => server |> Server.on(~event=connectionEvent))
-      );
+      >>= (server => IO.suspend(() => server |> Server.on(~event)));
     }
   );
 
@@ -44,11 +43,11 @@ let programHandler = (io: IO.t('a, 'e)): unit =>
   io
   |> IO.unsafeRunAsync(
        fun
-       | Ok(v) => v |> Js.log
+       | Ok(_) => "> program operational" |> Js.log
        | Error(e) => {
            "> an error occurred" |> Js.log;
            e |> Js.log;
          },
      );
 
-program |> programHandler;
+program(redisConfig, webSocketConfig) |> programHandler;

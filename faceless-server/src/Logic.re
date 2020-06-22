@@ -1,45 +1,14 @@
 open FacelessCore;
-open Redis;
 open Relude_Globals;
 open Relude_IO;
 open Relude_List.IO;
-open FacelessCore.Types;
-
-type environment = {
-  redisPort: option(int),
-  webSocketPort: option(int),
-  redisHost: option(string),
-};
-
-// NB
-// int of string can still thow an exception if it can't be converted correctly
-// need to make int of string return an option(int) for referential transparency
-let parseProcess = (process: Node_process.t): environment => {
-  let dict: Js_dict.t(string) = process##env;
-
-  let redisPort: option(int) =
-    dict->Js.Dict.get("REDIS_PORT") |> Option.map(s => s |> int_of_string);
-
-  let webSocketPort: option(int) =
-    dict->Js.Dict.get("WEBSOCKET_PORT") |> Option.map(s => s |> int_of_string);
-
-  let redisHost: option(string) = dict->Js.Dict.get("REDIS_HOST");
-
-  {redisPort, redisHost, webSocketPort};
-};
-
-let defaultHandler = (io: IO.t('a, 'e)): unit =>
-  io
-  |> IO.unsafeRunAsync(
-       fun
-       | Ok(_) => "success" |> Js.log
-       | Error(_) => "an error occurred" |> Js.log,
-     );
+open Utils;
+open Types;
 
 // helper function to generate a unix timestamp
 let genDate = (): float => Js.Date.now();
 
-// helper function to generatae a creation message
+// helper function to generate a creation message
 let genCreationMessage = (): string =>
   {
     id: Uuid.v4(),
@@ -92,7 +61,7 @@ let getAllTextMessages =
        }
      );
 
-// by the nature of redis there is no concreate concept of creation or deletion
+// by the nature of redis there is no concrete concept of creation or deletion
 // for the purposes of the app we'll 'create' a channel be ensuring we have keyspace assigned to a list
 // with at least one message
 // conversely we will 'delete' a channel, by voiding a list of all messages / just deleting the key
@@ -129,10 +98,6 @@ let deleteChannel = (client: Redis.Client.t, ~channel: Types.channelInfo) =>
 let sendMessage = (client: Ws.Client.t, ~data: string) =>
   IO.suspend(() => client |> Ws.Client.send(~data));
 
-// client availible in the closure if we omit it... strange. thank you ocaml
-// not referentially transparent though
-// reads through the channel info list
-// gets the channel Id's
 // deletes all corresponding message lists
 let deleteAllChannels =
     (client: Redis.Client.t, channelInfoList: list(Types.channelInfo)) =>
@@ -190,7 +155,7 @@ let sendChannelInfoList = (wsClient: Ws.Client.t, redisClient: Redis.Client.t) =
   );
 };
 
-let f = (effect: 'a => IO.t('b, 'e0), client: 'a): IO.t('a, 'e0) =>
+let wrapperf = (effect: 'a => IO.t('b, 'e0), client: 'a): IO.t('a, 'e0) =>
   IO.suspend(() => client)
   >>= (client => client |> effect)
   >>= (_ => IO.suspend(() => client));
@@ -203,7 +168,7 @@ let websocketMessageHandler =
   switch (decodedMessage) {
   | ChannelInfoMessage(channelInfo) =>
     redisClient
-    |> f(createChannel(~channelInfo))
+    |> wrapperf(createChannel(~channelInfo))
     >>= (
       client => client |> Redis_IO.publish(~channel="global", ~value=message)
     )
@@ -211,7 +176,7 @@ let websocketMessageHandler =
 
   | TextMessageMessage(textMessage) =>
     redisClient
-    |> f(
+    |> wrapperf(
          Redis_IO.lpush(
            ~key=channelId,
            ~item=
@@ -237,7 +202,7 @@ let sendAllTextMessages =
      );
 };
 
-// subscribe to global and subscribe to channel need to be made more clean
+// subscribe to global and subscribe to channel need to be DRY
 let subscribeToGlobal =
     (
       wsClient: Ws.Client.t,
@@ -283,20 +248,18 @@ let subscribeToChannel =
       channelId: string,
     ) => {
   let subscribeHandler =
-      (wsClient: Ws.Client.t, channelId: string, _: int): unit => {
+      (wsClient: Ws.Client.t, channelId: string, _: int): unit =>
     general
     |> getAllTextMessages(~channelId)
     >>= (messages => wsClient |> sendAllTextMessages(messages))
     |> defaultHandler;
-  };
 
   let unsubscribeHandler = (_: Ws.Client.t, _: string, _: int): unit =>
     "> client unsubscribed" |> Js.log;
 
   let messageHandler =
-      (wsClient: Ws.Client.t, _: string, message: string): unit => {
+      (wsClient: Ws.Client.t, _: string, message: string): unit =>
     wsClient |> sendMessage(~data=message) |> defaultHandler;
-  };
 
   let subscribeEvent = `subscribe(wsClient |> subscribeHandler);
   let unsubscribeEvent = `unsubscribe(wsClient |> unsubscribeHandler);
@@ -319,55 +282,50 @@ let subscribeToChannel =
 };
 
 let wsServerConnectionHandler =
-    // subscruber
-    // general
     (
       redisConfig: Redis.clientOptions,
       wsClient: Ws.Client.t,
       req: Fetch.Request.t,
     ) => {
-  "connection secured" |> Js.log;
-
-  switch (req |> Fetch.Request.url |> Utils.pathParser) {
-  | GlobalChannel =>
-    let event =
-      `message(
-        websocketMessageHandler(
-          "",
-          ~redisClient=Redis.createClient(redisConfig),
-        ),
-      ); // need to make the channel ID optional
-
+  let composeResources = (channelId: string) =>
     IO.suspend(() => wsClient)
-    >>= (client => IO.suspend(() => client |> Ws.Client.on(~event)))
     >>= (
       wsClient =>
-        subscribeToGlobal(
-          wsClient,
-          Redis.createClient(redisConfig),
-          Redis.createClient(redisConfig),
+        Redis_IO.createClient2(redisConfig, redisConfig)
+        >>= (
+          ((subscriber, general)) => {
+            let event =
+              `message(
+                websocketMessageHandler(channelId, ~redisClient=general),
+              );
+            IO.suspend(() => wsClient |> Ws.Client.on(~event))
+            >>= (
+              wsClient => IO.suspend(() => (wsClient, subscriber, general))
+            );
+          }
         )
-    )
-    |> defaultHandler;
-  | MessageChannel(channelId) =>
-    let event =
-      `message(
-        websocketMessageHandler(
-          channelId,
-          ~redisClient=Redis.createClient(redisConfig),
-        ),
-      );
-    let attachEvent = IO.suspend(() => wsClient |> Ws.Client.on(~event));
-    attachEvent
-    >>= (
-      wsClient =>
-        subscribeToChannel(
-          wsClient,
-          Redis.createClient(redisConfig),
-          Redis.createClient(redisConfig),
-          channelId,
-        )
-    )
-    |> defaultHandler;
-  };
+    );
+
+  let channelType = req |> Fetch.Request.url |> Utils.pathParser;
+
+  (
+    switch (channelType) {
+    | GlobalChannel =>
+      ""
+      |> composeResources
+      >>= (
+        ((wsClient, subscriber, general)) =>
+          subscribeToGlobal(wsClient, subscriber, general)
+      )
+
+    | MessageChannel(channelId) =>
+      channelId
+      |> composeResources
+      >>= (
+        ((wsClient, subscriber, general)) =>
+          subscribeToChannel(wsClient, subscriber, general, channelId)
+      )
+    }
+  )
+  |> defaultHandler;
 };

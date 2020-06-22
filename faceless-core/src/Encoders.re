@@ -30,18 +30,6 @@ let encodeTextMessage = (textMessage: Types.textMessage): Js.Json.t => {
   |> object_;
 };
 
-let encodeCreateChannelRequest =
-    (createChannelRequest: Types.createChannelRequest): Js.Json.t => {
-  let {displayName, password, hidden} = createChannelRequest;
-
-  [
-    ("displayName", displayName |> string),
-    ("hidden", hidden |> bool),
-    ("password", password |> string_of_option |> string),
-  ]
-  |> object_;
-};
-
 // helper function for encodeMessage
 let derivePayloadType = (message: Types.message) =>
   switch (message) {

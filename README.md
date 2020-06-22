@@ -1,23 +1,10 @@
-# faceless
+# ReasonMl Examples
+
+## faceless
 
 faceless is a simple, multitenant anonymous chat room application
 
-## what this app is
-
-- a fun project to get to grips with reasonML and it's ecosystem
-
-## what this app is not
-
-- a canonical example of how to use websockets in a production web application
-
-## main goals
-
-- comparing the functionality of relude's IO monad to that of cats effect
-- understanding json encoding / decoding with bs-json
-- understanding how to make bespoke reasonml js bindings
-- understanding how key react hooks and component creation works in ReasonReact
-
-# setup instructions
+## setup instructions
 
 ```sh
 # 1. build all docker images
@@ -27,19 +14,20 @@ $ make build-all
 $ make up
 
 # 3. open http://localhost:3001 in your browser of choice
+
 # ! see makefile for underlying build commands
 ```
 
-# cleanup instructions
+## cleanup instructions
 
 ```sh
-# remove above images from local machine
+# 1. remove above images from local machine
 $ make remove-all
 ```
 
-# useful sources / documentation
+## useful sources / documentation
 
-## reason
+### reason
 
 - https://reasonml.github.io/docs/en/what-and-why
 - https://github.com/glennsl/bs-json
@@ -50,7 +38,7 @@ $ make remove-all
 - https://dev.to/mlms13/type-classes-in-reasonml-a-world-of-functions-for-free-2lag
 - https://reasonml.github.io/reason-react/docs/en/context-mixins
 
-## misc
+### misc
 
 - https://docs.npmjs.com/files/package.json
 - https://webpack.js.org/concepts/

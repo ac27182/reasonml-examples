@@ -13,12 +13,6 @@ type channelInfo = {
   creationTimestamp: float,
 };
 
-type createChannelRequest = {
-  displayName: string,
-  hidden: bool,
-  password: option(string),
-};
-
 type message =
   | ChannelInfoMessage(channelInfo)
   | ChannelInfoListMessage(list(channelInfo))
@@ -28,3 +22,9 @@ type message =
 type channelMultiplexer =
   | GlobalChannel
   | MessageChannel(string);
+
+type environment = {
+  redisPort: option(int),
+  webSocketPort: option(int),
+  redisHost: option(string),
+};
