@@ -4,8 +4,8 @@ open FacelessCore.Types;
 open FacelessCore.Webapi;
 open Relude_Globals;
 open ClientLogic;
-
-// take the path
+open Relude_Option;
+open ReactEvent;
 
 type action = ClientLogic.appAction;
 
@@ -20,7 +20,6 @@ type state = {
   nameInput: string,
 };
 
-// state to initialise the application
 let initialState = {
   channels: List.empty,
   navigationPannelHidden: false,
@@ -32,7 +31,6 @@ let initialState = {
   nameInput: "",
 };
 
-// component reducer
 let reducer = (state: state, action: action) =>
   switch (action) {
   | EnterChannel(channelInfo) => {
@@ -60,6 +58,8 @@ let reducer = (state: state, action: action) =>
       ...state,
       channels: state.channels |> List.append(channelInfo),
     }
+  | HandleNameInputChange(nameInput) => {...state, nameInput}
+  | SetName(name) => {...state, name, nameInput: ""}
   };
 
 let messageToAction = (message: Types.message): action =>
@@ -75,8 +75,6 @@ let make = (~userId: string) => {
   let (state, dispatch: action => unit) =
     React.useReducer(reducer, initialState);
 
-  let url = "ws://localhost:3000/global";
-
   let {
     currentChannel,
     channels,
@@ -85,6 +83,7 @@ let make = (~userId: string) => {
     wsChannelClient,
     textMessages,
     name,
+    nameInput,
   } = state;
 
   // message handler function
@@ -96,7 +95,8 @@ let make = (~userId: string) => {
     |> dispatch;
 
   React.useEffect0(() => {
-    AddWsGlobalClient(Some(Webapi.WebSocket.wsbc(url))) |> dispatch;
+    let url = "ws://localhost:3000/global";
+    AddWsGlobalClient(Webapi.WebSocket.wsbc(url) |> Option.some) |> dispatch;
     Some(() => ());
   });
 
@@ -132,17 +132,18 @@ let make = (~userId: string) => {
     authorId: userId,
   };
 
-  switch (wsChannelClient) {
-  | None => "no websocket passed in..." |> Js.log
-  | Some(w) => w |> WebSocket.onmessage(~messageHandler)
-  };
+  let handleNameInputChange = (event: ReactEvent.Form.t): unit =>
+    HandleNameInputChange(event->Form.target##value) |> dispatch;
+
+  let handleSetName = (_: ReactEvent.Mouse.t): unit =>
+    SetName(nameInput) |> dispatch;
 
   <div className="app-container">
     <ContextProvider value>
       <NavigationPannel navigationPannelHidden channels />
     </ContextProvider>
     {switch (currentChannel) {
-     | None => <Spinner name />
+     | None => <Spinner name nameInput handleNameInputChange handleSetName />
      | Some(currentChannel) =>
        <ContextProvider value>
          <ChannelPannel currentChannel />

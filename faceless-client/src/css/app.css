@@ -60,31 +60,52 @@ button:hover {
   width: 200px;
   height: 200px;
   border-radius: 50%;
+  background-color: #333;
   position: relative;
   transition: all 2s ease-in-out;
-  background-color: #333;
 }
 
 .centered-item:hover {
-  height: 800px;
-  width: 800px;
+  width: 450px;
+  height: 450px;
 }
 
 /* we could do this programatically using inline styles with reason... */
 .elipse {
   box-shadow: 3px 3px 6px 0 rgba(0, 0, 0, 0.1);
   width: 50%;
-  height: 100%;
   border: 2px white solid;
   border-radius: 50%;
   position: absolute;
+
+  height: 0;
+  padding-bottom: 100%;
 }
 
+.container {
+  display: grid;
+  grid-template-rows: 1fr;
+  grid-template-columns: 200px 100px;
+
+  border-radius: 50%;
+  padding: 100px;
+
+  opacity: 0;
+  z-index: 999;
+  transition: all 2s ease-in-out;
+}
+.container:hover {
+  opacity: 1;
+  padding: 225px;
+}
 .name-prompt {
   font-size: 20px;
 }
 .name-input {
-  z-index: 999;
+  /* z-index: 999; */
+  height: 40px;
+}
+.name-input .name-button {
   height: 40px;
 }
 

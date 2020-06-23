@@ -11,7 +11,9 @@ type appAction =
   | AppendChannelInfo(channelInfo)
   | ToggleNavigationPannel
   | PopulateChannels(list(channelInfo))
-  | PopulateTextMessages(option(list(textMessage)));
+  | PopulateTextMessages(option(list(textMessage)))
+  | HandleNameInputChange(string)
+  | SetName(string);
 
 // app functions
 let enterChannel =
