@@ -3,6 +3,7 @@ type textMessage = {
   authorId: string,
   data: string,
   creationTimestamp: float,
+  authorName: string,
 };
 
 type channelInfo = {

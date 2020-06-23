@@ -15,6 +15,7 @@ let genCreationMessage = (): string =>
     authorId: "server",
     data: "channel created",
     creationTimestamp: genDate(),
+    authorName: "mr_robot",
   }
   |> Encoders.encodeTextMessage
   |> Js.Json.stringify;

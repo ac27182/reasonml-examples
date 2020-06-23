@@ -21,6 +21,7 @@ let decodeTextMessage = (json: Js.Json.t): Types.textMessage => {
   authorId: json |> field("authorId", string),
   data: json |> field("data", string),
   creationTimestamp: json |> decodeTimestampAsFloat,
+  authorName: json |> field("authorName", string),
 };
 
 let decodeMessage = (json: Js.Json.t): Types.message => {

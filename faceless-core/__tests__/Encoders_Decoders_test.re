@@ -31,7 +31,7 @@ describe("channelInfo", () => {
         "id": "xxxx-xxxx-xxxx-xxxx",
         "hidden": false,
         "password": "",
-        "creationTimestamp": 1
+        "creationTimestamp": "1"
       }
     |js}
       |> Js.Json.parseExn;
@@ -60,7 +60,8 @@ describe("channelInfo", () => {
         "id": "xxxx-xxxx-xxxx-xxxx",
         "authorId": "yyyy-yyyy-yyyy-yyyy",
         "data": "hello world",
-        "creationTimestamp": 2
+        "creationTimestamp": "2",
+        "authorName": "mrRobot"
       }
     |js}
         |> Js.Json.parseExn;
@@ -70,6 +71,7 @@ describe("channelInfo", () => {
         authorId: "yyyy-yyyy-yyyy-yyyy",
         data: "hello world",
         creationTimestamp: 2.0,
+        authorName: "mrRobot",
       };
 
       roundTripAssertion(
@@ -93,7 +95,7 @@ describe("channelInfo", () => {
                 "id": "xxxx-xxxx-xxxx-xxxx",
                 "hidden": false,
                 "password": "",
-                "creationTimestamp": 1
+                "creationTimestamp": "1"
               }
             }
           |js}
@@ -129,14 +131,14 @@ describe("channelInfo", () => {
                 "id": "xxxx-xxxx-xxxx-xxxx",
                 "hidden": false,
                 "password": "",
-                "creationTimestamp": 1
+                "creationTimestamp": "1"
               },
               {
                 "displayName": "global0",
                 "id": "xxxx-xxxx-xxxx-yyyy",
                 "hidden": false,
                 "password": "",
-                "creationTimestamp": 1
+                "creationTimestamp": "1"
               }
             ]
           }

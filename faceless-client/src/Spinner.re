@@ -9,7 +9,8 @@ let make =
   // let (state, dispatch) = React.useReducer(reducer, initialState);
   <div className="spinner-container">
     <div className="name-prompt">
-      {"my name is " ++ name ++ "_" |> React.string}
+      {"my name is " ++ name |> React.string}
+      <span className="blinking-cursor"> {"_" |> React.string} </span>
     </div>
     <div className="centered-item">
       <div className="elipse rotation1" />

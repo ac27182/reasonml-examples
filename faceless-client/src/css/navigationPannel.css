@@ -78,3 +78,13 @@
   text-align: center;
   line-height: 70px;
 }
+
+/* animations */
+@keyframes slideFromLeft {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}

@@ -8,6 +8,7 @@ type appContext = {
   wsChannelClient: option(WebSocket.t),
   textMessages: option(list(textMessage)),
   authorId: string,
+  authorName: string,
 };
 
 let defaultAppConext: appContext = {
@@ -15,7 +16,9 @@ let defaultAppConext: appContext = {
   wsGlobalClient: None,
   wsChannelClient: None,
   textMessages: None,
-  authorId: String.empty,
+  // nb String.empty => undefined
+  authorId: "",
+  authorName: "",
 };
 
 // let defaultValue = (_: appAction): unit => "doing nothing..." |> Js.log; // do nothing

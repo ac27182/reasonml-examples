@@ -100,13 +100,27 @@ let make = (~userId: string) => {
     Some(() => ());
   });
 
+  React.useEffect0(() => {
+    let name = Dom_storage.localStorage |> Dom_storage.getItem("name");
+    SetName(name |> Utils.string_of_option) |> dispatch;
+    Some(() => ());
+  });
+
+  React.useEffect1(
+    () => {
+      Dom_storage.localStorage |> Dom_storage.setItem("name", name);
+      Some(() => ());
+    },
+    [name] |> Array.fromList,
+  );
+
   React.useEffect1(
     () => {
       switch (wsGlobalClient) {
       | None => "no websocket passed in..." |> Js.log
       | Some(w) => w |> WebSocket.onmessage(~messageHandler)
       };
-      // need to close down the websocket connection
+      // need to close down the websocket connection...
       Some(() => ());
     },
     [wsGlobalClient] |> Array.fromList,
@@ -130,6 +144,7 @@ let make = (~userId: string) => {
     wsChannelClient,
     textMessages,
     authorId: userId,
+    authorName: name,
   };
 
   let handleNameInputChange = (event: ReactEvent.Form.t): unit =>

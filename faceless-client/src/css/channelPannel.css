@@ -44,19 +44,14 @@
   overflow-y: visible;
 
   font-size: 12px;
-  min-height: 50px;
+  min-height: 100px;
   margin: 5px 50px;
   padding: 10px;
   padding-left: 30px;
-
   border-top: 1px solid #333;
   border-bottom: 1px solid #333;
-  /* border-radius: 10px; */
 
-  /* background-color: white; */
   transition: background 0.15s ease-in-out;
-
-  /* box-shadow: 3px 3px 6px 0 rgba(  0, 0, 0, 0.1); */
 }
 .message-display-item-container:hover {
   background-color: #32e0c4;

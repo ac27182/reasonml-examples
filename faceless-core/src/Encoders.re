@@ -19,13 +19,14 @@ let encodeChannelInfo = (channelInfo: Types.channelInfo): Js.Json.t => {
 };
 
 let encodeTextMessage = (textMessage: Types.textMessage): Js.Json.t => {
-  let {id, authorId, data, creationTimestamp} = textMessage;
+  let {id, authorId, data, creationTimestamp, authorName} = textMessage;
 
   [
     ("id", id |> string),
     ("authorId", authorId |> string),
     ("data", data |> string),
     ("creationTimestamp", creationTimestamp |> encodeTimestampAsString),
+    ("authorName", authorName |> string),
   ]
   |> object_;
 };
