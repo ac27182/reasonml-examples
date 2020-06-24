@@ -6,7 +6,6 @@ let make =
       ~handleNameInputChange: ReactEvent.Form.t => unit,
       ~handleSetName: ReactEvent.Mouse.t => unit,
     ) => {
-  // let (state, dispatch) = React.useReducer(reducer, initialState);
   <div className="spinner-container">
     <div className="name-prompt">
       {"my name is " ++ name |> React.string}

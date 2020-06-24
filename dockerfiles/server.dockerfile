@@ -8,6 +8,3 @@ RUN yarn install --pure-lockfile
 
 COPY . .
 RUN yarn run build
-
-# RUN yarn --cwd ../faceless-core install --pure-lockfile
-# RUN yarn --cwd ../faceless-core run build

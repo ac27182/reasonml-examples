@@ -16,18 +16,15 @@
   "license": "ISC",
   "devDependencies": {
     "@glennsl/bs-jest": "^0.5.1",
-    "@glennsl/bs-json": "^5.0.2",
     "bs-platform": "^7.3.2"
   },
   "dependencies": {
     "bs-bastet": "^1.2.5",
-    "bs-express": "^1.0.1",
-    "bs-fetch": "^0.5.2",
     "faceless-core": "file:../faceless-core",
     "redis": "^3.0.2",
-    "relude": "^0.63.1",
-    "uuid": "^8.1.0",
-    "ws": "^7.3.0"
+    "bs-express": "^1.0.1",
+    "bs-fetch": "^0.5.2",
+    "relude": "^0.63.1"
   },
   "jest": {
     "verbose": false,

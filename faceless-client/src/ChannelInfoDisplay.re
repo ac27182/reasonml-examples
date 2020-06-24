@@ -35,7 +35,7 @@ module Ticker = {
 module ChannelInfoItem = {
   [@react.component]
   let make = (~channelInfo: Types.channelInfo) => {
-    let {id, displayName, hidden, creationTimestamp} = channelInfo;
+    let {id, displayName, creationTimestamp} = channelInfo;
 
     let {dispatch} = React.useContext(ContextProvider.appContext);
 
@@ -44,10 +44,14 @@ module ChannelInfoItem = {
       className="channel-info-item-container"
       onClick={_ => dispatch |> ClientLogic.enterChannel(channelInfo)}>
       <div>
-        <div> {"nm_ - " ++ displayName |> React.string} </div>
+        <div className="channel-info-item-name">
+          {displayName |> React.string}
+        </div>
         <div> {"id_  - " ++ id |> React.string} </div>
         <div>
-          {"ct_ - " ++ (creationTimestamp |> Js.Float.toString) |> React.string}
+          {"ct_ - "
+           ++ (creationTimestamp |> Js.Date.fromFloat |> Js.Date.toISOString)
+           |> React.string}
         </div>
         <Ticker epoch=creationTimestamp />
       </div>

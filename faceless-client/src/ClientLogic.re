@@ -37,3 +37,7 @@ type navigationPannelAction =
 type messageInputBarAction =
   | InputMessage(string)
   | SendMessage;
+
+// general
+let makeWsUrl = (port: int, path: string) =>
+  "ws://localhost:" ++ (port |> string_of_int) ++ path;

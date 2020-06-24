@@ -12,6 +12,8 @@ type state = {
   newChannelHiddenToggle: bool,
 };
 
+type action = ClientLogic.navigationPannelAction;
+
 let initialState: state = {
   filterInput: String.empty,
   createChannelCollapsed: true,
@@ -20,7 +22,7 @@ let initialState: state = {
   newChannelHiddenToggle: false,
 };
 
-let reducer = (state, action: navigationPannelAction) =>
+let reducer = (state, action) =>
   switch (action) {
   | ToggleCollapse => {
       ...state,
@@ -48,7 +50,6 @@ let reducer = (state, action: navigationPannelAction) =>
     }
   };
 
-// impure
 module ChannelSearchBar = {
   [@react.component]
   let make =
@@ -100,20 +101,23 @@ module CreateChannelBar = {
             placeholder="channel display name"
             onChange=handleNewChannelDisplayNameInput
             value=newChannelDisplayNameInput
+            maxLength=15
           />
-          <input
-            placeholder="channel password"
-            onChange=handleNewChannelPasswordInput
-            value=newChannelPasswordInput
-          />
-          <button onClick=handleNewChannelHiddenToggle>
-            {"hidden" |> React.string}
-          </button>
+          // <input
+          //   placeholder="channel password"
+          //   onChange=handleNewChannelPasswordInput
+          //   value=newChannelPasswordInput
+          // />
+          // <button onClick=handleNewChannelHiddenToggle>
+          //   {"hidden" |> React.string}
+          // </button>
           <div className="containerx">
             <button onClick=toggleCollapse>
               {"cancel" |> React.string}
             </button>
-            <button onClick=handleCreateNewChannel>
+            <button
+              disabled={newChannelDisplayNameInput |> String.length <= 2}
+              onClick=handleCreateNewChannel>
               {"create" |> React.string}
             </button>
           </div>
@@ -144,8 +148,15 @@ let make =
 
   // super verbose, we can definately fine a cleaner way to do this late on...
   // these are pretty much the same function
-  let handleNewChannelDisplayNameInput = (event: ReactEvent.Form.t): unit =>
-    HandleNewChannelDisplayNameInput(event->Form.target##value) |> dispatch;
+  let handleNewChannelDisplayNameInput = (event: ReactEvent.Form.t): unit => {
+    let newInput = event->Form.target##value;
+    let regexp = [%re "/^[a-zA-Z0-9_]*$/g"];
+    let opt = newInput |> Js.String.match(regexp);
+    switch (opt) {
+    | None => ()
+    | _ => HandleNewChannelDisplayNameInput(newInput) |> dispatch
+    };
+  };
 
   let handleNewChannelPasswordInput = (event: ReactEvent.Form.t): unit =>
     HandleNewChannelPasswordInput(event->Form.target##value) |> dispatch;
@@ -187,7 +198,6 @@ let make =
          |> String.contains(~search=filterInput)
        );
 
-  // main component
   <div className="navigation-pannel-container">
     <NavigationPannelHeader />
     <ChannelSearchBar clearFilter filterChannels filterInput />

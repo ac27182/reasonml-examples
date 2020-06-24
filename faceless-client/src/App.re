@@ -4,11 +4,9 @@ open FacelessCore.Types;
 open FacelessCore.Webapi;
 open Relude_Globals;
 open ClientLogic;
-open Relude_Option;
 open ReactEvent;
 
 type action = ClientLogic.appAction;
-
 type state = {
   channels: list(channelInfo),
   textMessages: option(list(textMessage)),
@@ -71,7 +69,7 @@ let messageToAction = (message: Types.message): action =>
   };
 
 [@react.component]
-let make = (~userId: string) => {
+let make = (~userId: string, ~webSocketPort: int) => {
   let (state, dispatch: action => unit) =
     React.useReducer(reducer, initialState);
 
@@ -86,7 +84,6 @@ let make = (~userId: string) => {
     nameInput,
   } = state;
 
-  // message handler function
   let messageHandler = (messageEvent: WebSocket.messageEvent): unit =>
     messageEvent.data
     |> Js.Json.parseExn
@@ -95,7 +92,8 @@ let make = (~userId: string) => {
     |> dispatch;
 
   React.useEffect0(() => {
-    let url = "ws://localhost:3000/global";
+    let url = makeWsUrl(webSocketPort, "/global");
+
     AddWsGlobalClient(Webapi.WebSocket.wsbc(url) |> Option.some) |> dispatch;
     Some(() => ());
   });
@@ -120,7 +118,6 @@ let make = (~userId: string) => {
       | None => "no websocket passed in..." |> Js.log
       | Some(w) => w |> WebSocket.onmessage(~messageHandler)
       };
-      // need to close down the websocket connection...
       Some(() => ());
     },
     [wsGlobalClient] |> Array.fromList,
@@ -137,7 +134,18 @@ let make = (~userId: string) => {
     [wsChannelClient] |> Array.fromList,
   );
 
-  // setting state for context
+  React.useEffect1(
+    () => {
+      switch (wsChannelClient, currentChannel) {
+      | (Some(w), None) => w |> WebSocket.close
+      | (Some(w), Some(_)) => w |> WebSocket.close
+      | (_, _) => ()
+      };
+      Some(() => ());
+    },
+    [currentChannel] |> Array.fromList,
+  );
+
   let value: ContextProvider.appContext = {
     dispatch,
     wsGlobalClient,
@@ -145,6 +153,7 @@ let make = (~userId: string) => {
     textMessages,
     authorId: userId,
     authorName: name,
+    webSocketPort,
   };
 
   let handleNameInputChange = (event: ReactEvent.Form.t): unit =>

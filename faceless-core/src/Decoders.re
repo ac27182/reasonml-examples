@@ -25,7 +25,6 @@ let decodeTextMessage = (json: Js.Json.t): Types.textMessage => {
 };
 
 let decodeMessage = (json: Js.Json.t): Types.message => {
-  json |> Js.log;
   switch (json |> field("payloadType", string)) {
   | "channelInfo" =>
     ChannelInfoMessage(json |> field("payload", decodeChannelInfo))

@@ -1,11 +1,10 @@
-open Relude_Globals;
 open ClientLogic;
 open ReactEvent;
 open ContextProvider;
-open FacelessCore.Webapi;
 open FacelessCore;
-open FacelessCore.Types;
-// open Relude_Globals.Array;
+open Webapi;
+open Types;
+open Relude_Globals;
 
 type state = {messageInput: string};
 
@@ -23,16 +22,6 @@ let make = () => {
   let {wsChannelClient, authorId, authorName} = React.useContext(appContext);
   let {messageInput} = state;
 
-  // React.useEffect1(() => {}, [messageInput]|> Array.fromList);
-
-  let textMessage: textMessage = {
-    id: Uuid.v4(),
-    authorId,
-    data: messageInput,
-    creationTimestamp: Js.Date.now(),
-    authorName,
-  };
-
   <div className="message-input-bar-container">
     <input
       value=messageInput
@@ -46,7 +35,13 @@ let make = () => {
           w
           |> WebSocket.send(
                ~message=
-                 TextMessageMessage(textMessage)
+                 TextMessageMessage({
+                   id: Uuid.v4(),
+                   authorId,
+                   data: messageInput,
+                   creationTimestamp: Js.Date.now(),
+                   authorName,
+                 })
                  |> Encoders.encodeMessage
                  |> Js.Json.stringify,
              );

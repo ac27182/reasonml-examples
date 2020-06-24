@@ -4,16 +4,22 @@ open FacelessCore.Types;
 module MesageDisplayItem = {
   [@react.component]
   let make = (~textMessage: Types.textMessage, ~clientMessage: bool) => {
-    let {id, authorId, creationTimestamp, data, authorName} = textMessage;
-    <div className="message-display-item-container">
-      <div> {"id_ - " ++ id |> React.string} </div>
-      <div> {"ida - " ++ authorId |> React.string} </div>
-      <div>
-        {"ct_ - " ++ (creationTimestamp |> Js.Float.toString) |> React.string}
-      </div>
-      <div> {"msg - " ++ data |> React.string} </div>
+    let {id, creationTimestamp, data, authorName} = textMessage;
+
+    let className =
+      clientMessage
+        ? "message-display-item-container user-message-item"
+        : "message-display-item-container";
+
+    <div className>
       <div> {"nam - " ++ authorName |> React.string} </div>
-      <div> {clientMessage |> string_of_bool |> React.string} </div>
+      <div> {"id_ - " ++ id |> React.string} </div>
+      <div>
+        {"ct_ - "
+         ++ (creationTimestamp |> Js.Date.fromFloat |> Js.Date.toISOString)
+         |> React.string}
+      </div>
+      <div className="message"> {"> " ++ data |> React.string} </div>
     </div>;
   };
 };

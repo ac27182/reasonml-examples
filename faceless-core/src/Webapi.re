@@ -8,6 +8,7 @@ module WebSocket = {
 
   [@bs.new] external wsbc: string => t = "WebSocket";
   [@bs.send] external send: (t, ~message: string) => unit = "send";
+  [@bs.send] external close: t => unit = "close";
 
   // [@bs.set] external onopen
   // [@bs.set] external onerror

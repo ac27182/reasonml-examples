@@ -29,6 +29,7 @@
   text-align: center;
   vertical-align: middle;
   line-height: 70px;
+  overflow: hidden;
 }
 
 /* display */
@@ -48,13 +49,25 @@
   margin: 5px 50px;
   padding: 10px;
   padding-left: 30px;
-  border-top: 1px solid #333;
-  border-bottom: 1px solid #333;
+  border-radius: 5px;
+  border: 1px solid #333;
+
+  position: relative;
+  /* margin-left: 30%; */
+  float: right;
+  background-color: white;
 
   transition: background 0.15s ease-in-out;
 }
 .message-display-item-container:hover {
   background-color: #32e0c4;
+}
+.user-message-item {
+  background-color: #333;
+  color: white;
+}
+.message {
+  font-size: 18px;
 }
 
 /* message input bar */

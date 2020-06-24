@@ -27,11 +27,9 @@
 
 .create-channel-container-open {
   display: grid;
-  grid-template-rows: 50px 50px 50px 50px;
+  grid-template-rows: 50px 50px;
   grid-template-columns: 1fr;
-
   max-height: 400px;
-  /* height: 50px; */
 }
 .containerx {
   display: grid;
@@ -53,15 +51,28 @@
   margin: 5px;
   padding: 10px;
   padding-left: 30px;
-  border: 2px solid #333;
-  border-radius: 10px;
+  border-radius: 5px;
+  border: 1px solid #333;
 
-  transition: background 0.15s ease-in-out;
+  transition: all 0.5s ease-in-out;
+  filter: rotation 64s infinite linear colorRotate;
+  background-color: white;
 
   font-size: 12px;
 }
 .channel-info-item-container:hover {
   background-color: #32e0c4;
+  animation: colorRotate 16s infinite linear;
+}
+.selected-channel {
+  background-color: #32e0c4;
+  animation: colorRotate 16s infinite linear;
+}
+.channel-info-item-name {
+  display: block;
+  justify-content: center;
+  font-size: 30px;
+  padding-bottom: 5px;
 }
 
 .info-container {
@@ -77,14 +88,4 @@
 
   text-align: center;
   line-height: 70px;
-}
-
-/* animations */
-@keyframes slideFromLeft {
-  0% {
-    transform: translateX(-100%);
-  }
-  100% {
-    transform: translateX(0);
-  }
 }

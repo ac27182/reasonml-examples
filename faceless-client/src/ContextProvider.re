@@ -9,6 +9,7 @@ type appContext = {
   textMessages: option(list(textMessage)),
   authorId: string,
   authorName: string,
+  webSocketPort: int,
 };
 
 let defaultAppConext: appContext = {
@@ -19,6 +20,7 @@ let defaultAppConext: appContext = {
   // nb String.empty => undefined
   authorId: "",
   authorName: "",
+  webSocketPort: 3000,
 };
 
 // let defaultValue = (_: appAction): unit => "doing nothing..." |> Js.log; // do nothing

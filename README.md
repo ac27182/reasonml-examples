@@ -4,6 +4,11 @@
 
 faceless is a simple, multitenant anonymous chat room application
 
+## pre-requesites
+
+- docker
+- GNU make
+
 ## setup instructions
 
 ```sh
@@ -14,6 +19,14 @@ $ make build-all
 $ make up
 
 # 3. open http://localhost:3001 in your browser of choice
+
+# 4. open a second browser session up in `incognito mode` to simulate a second user
+
+# 5. hover over the orb to set your chat name
+
+# 6. enter or make and enter a channel
+
+# 7. send some messages
 
 # ! see makefile for underlying build commands
 ```

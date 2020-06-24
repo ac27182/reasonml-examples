@@ -6,10 +6,11 @@ open ContextProvider;
 
 [@react.component]
 let make = (~currentChannel: Types.channelInfo) => {
-  let url: string = "ws://localhost:3000/" ++ currentChannel.id;
-
-  let {textMessages, authorId, dispatch} =
+  let {textMessages, authorId, dispatch, webSocketPort} =
     React.useContext(ContextProvider.appContext);
+
+  let url: string =
+    ClientLogic.makeWsUrl(webSocketPort, "/" ++ currentChannel.id);
 
   React.useEffect1(
     () => {

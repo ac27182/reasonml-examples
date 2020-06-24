@@ -4,17 +4,17 @@
   display: grid;
   grid-template-rows: 1fr;
   grid-template-columns: minmax(200px, 450px) minmax(450px, 1fr);
-  background-color: white;
+  background-color: #f3f3f3;
   font-family: "Courier New", Courier, monospace;
 }
 
 /* common */
 input {
   background-color: white;
-  border-radius: 10px;
+  border-radius: 5px;
 
   margin: 5px 5px;
-  border: 2px solid #333;
+  border: 1px solid #333;
 
   transition: background 0.5s ease-in-out;
   text-align: center;
@@ -28,10 +28,10 @@ input:hover {
 
 button {
   background-color: white;
-  border-radius: 10px;
+  border-radius: 5px;
 
   margin: 5px 5px;
-  border: 2px solid #333;
+  border: 1px solid #333;
 
   transition: background 0.5s ease-in-out;
   text-align: center;
@@ -62,9 +62,8 @@ button:hover {
   border-radius: 50%;
   background-color: #333;
   position: relative;
-  transition: all 2s ease-in-out;
+  transition: all 0.75s ease-in-out;
 }
-
 .centered-item:hover {
   width: 450px;
   height: 450px;
@@ -74,7 +73,7 @@ button:hover {
 .elipse {
   box-shadow: 3px 3px 6px 0 rgba(0, 0, 0, 0.1);
   width: 50%;
-  border: 2px white solid;
+  border: 1px white solid;
   border-radius: 50%;
   position: absolute;
 
@@ -92,20 +91,20 @@ button:hover {
 
   opacity: 0;
   z-index: 999;
-  transition: all 2s ease-in-out;
+  transition: all 0.75s ease-in-out;
 }
 .container:hover {
   opacity: 1;
   padding: 225px;
 }
+
 .name-prompt {
   font-size: 20px;
 }
 .name-input {
-  /* z-index: 999; */
   height: 40px;
 }
-.name-input .name-button {
+.name-input.name-button {
   height: 40px;
 }
 
@@ -145,15 +144,6 @@ button:hover {
 @keyframes fadein {
   from {
     opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes fadeout {
-  from {
-    opacity: 1;
   }
   to {
     opacity: 1;
