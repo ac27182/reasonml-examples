@@ -1,10 +1,10 @@
-version: "3.8"
+version: '3.3'
 
 services:
   client:
     image: faceless-client
     ports:
-      - "3001:3001"
+      - '3001:3001'
     environment:
       - WEBSOCKET_PORT=3000
     depends_on:
@@ -14,7 +14,7 @@ services:
   server:
     image: faceless-server
     ports:
-      - "3000:3000"
+      - '3000:3000'
     environment:
       - WEBSOCKET_PORT=3000
       - REDIS_PORT=6379
@@ -25,4 +25,4 @@ services:
   redis:
     image: redis:alpine
     ports:
-      - "6379:6379"
+      - '6379:6379'

@@ -4,14 +4,13 @@ WORKDIR /app/faceless-client
 
 COPY *json ./
 COPY yarn.lock .
-
 RUN yarn install --pure-lockfile
-RUN yarn --cwd ../faceless-core install 
-RUN yarn --cwd ../faceless-core run build
+
+# RUN yarn --cwd ../faceless-core install 
+# RUN yarn --cwd ../faceless-core run build
 
 COPY webpack.config.js .
 COPY src src
-
 RUN yarn run build 
 RUN yarn run webpack:production
 

@@ -1,11 +1,11 @@
-open Redis;
-open Relude_Globals;
+// open Redis;
+// open Relude_Globals;
 
-let client = createClient({port: 6379 |> Option.some, host: Option.empty});
+// let client = createClient({port: 6379 |> Option.some, host: Option.empty});
 
-let key = "channel0";
+// let key = "channel0";
 
-let callback = (_, data) => data |> Js.log;
+// let callback = (_, data) => data |> Js.log;
 
 // get all items from list
 // client->lrange(~key, ~start=0, ~stop=-1, callback);
@@ -18,13 +18,13 @@ let callback = (_, data) => data |> Js.log;
 
 // get key
 
-let channel: Types.channelInfo = {
-  id: "xxx",
-  displayName: "global",
-  hidden: false,
-  password: None,
-  creationTimestamp: 1.0,
-};
+// let channel: Types.channelInfo = {
+//   id: "xxx",
+//   displayName: "global",
+//   hidden: false,
+//   password: None,
+//   creationTimestamp: 1.0,
+// };
 
 // client
 // |> Redis_IO.hget(~key="global", ~field="xxx")
@@ -52,17 +52,17 @@ let channel: Types.channelInfo = {
 //        },
 //    );
 
-client
-|> Redis_IO.hget(~key="global", ~field="xxx")
-|> IO.flatMap(_ =>
-     client
-     |> Redis_IO.hset(
-          ~key="global",
-          ~field=channel.id,
-          ~value=channel |> Encoders.encodeChannelInfo |> Js.Json.stringify,
-        )
-   )
+// client
+// |> Redis_IO.hget(~key="global", ~field="xxx")
+// |> IO.flatMap(_ =>
+//      client
+//      |> Redis_IO.hset(
+//           ~key="global",
+//           ~field=channel.id,
+//           ~value=channel |> Encoders.encodeChannelInfo |> Js.Json.stringify,
+//         )
+//    )
 // |> IO.flatMap(_ => client |> Redis_IO.del(~key="global"))
 // |> IO.flatMap(_ => client |> Redis_IO.hdel(~key="global", ~field="xxx"))
-|> IO.flatMap(_ => client |> Redis_IO.hget(~key="global", ~field="xxx"))
-|> Utils.runAndLogIo;
+// |> IO.flatMap(_ => client |> Redis_IO.hget(~key="global", ~field="xxx"))
+// |> Utils.runAndLogIo;
